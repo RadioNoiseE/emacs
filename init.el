@@ -284,11 +284,13 @@
   :init (setq proof-splash-enable nil
               proof-delete-empty-windows t))
 
+(use-package magit
+  :defer t)
+
 (use-package flyspell
   :hook (text-mode . (lambda ()
                        (flyspell-mode 1))))
 
-(use-package magit
-  :defer t)
+(setq flymake-show-diagnostics-at-end-of-line 'short)
 
 ;;; init.el ends here
