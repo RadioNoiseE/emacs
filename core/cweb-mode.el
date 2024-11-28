@@ -1,7 +1,7 @@
 ;;; cweb-mode.el -*- lexical-binding:t -*-
 
 ;; Extension for literate programming with WEB and CWEB.
-;; Copyright (c) 1990 Don Knuth
+;; Copyright (C) 1990 Don Knuth
 
 (defvar pending-list nil
   "List of strings (usually WEB module names) still pending.")

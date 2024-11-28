@@ -1,7 +1,7 @@
 ;;; mkfile-mode.el -*- lexical-binding:t -*-
 
 ;; Minor mode for editing Mk targets and recipes.
-;; Copyright (c) 2023 LdBeth
+;; Copyright (C) 2023 LdBeth
 
 (require 'make-mode)
 (eval-when-compile (require 'rx))
