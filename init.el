@@ -20,14 +20,14 @@
         (let ((key (match-string 1))
               (val (match-string 2)))
           (setenv key val)
-          (when (string= key "PATH")
+          (when (string-equal key "PATH")
             (setq exec-path (split-string val path-separator))))))))
 
 (add-hook 'after-init-hook #'environment-update)
 
-(setq package-archives '(("gnu" . "https://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
-                         ("nongnu" . "https://mirrors.tuna.tsinghua.edu.cn/elpa/nongnu/")
-                         ("melpa" . "https://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
+(with-eval-after-load 'package
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/")))
 
 (eval-when-compile
   (require 'use-package))
@@ -70,6 +70,12 @@
           (lambda ()
             (when (derived-mode-p 'text-mode)
               (visual-line-mode))))
+
+(setq modus-themes-common-palette-overrides
+      '((fringe unspecified)))
+
+(mapc #'disable-theme custom-enabled-themes)
+(load-theme 'modus-operandi-tritanopia)
 
 (setq mode-line-right-align-edge 'right-margin)
 
@@ -169,9 +175,6 @@
   :init (marginalia-mode)
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle)))
-
-(use-package breadcrumb
-  :defer t)
 
 (with-eval-after-load 'font-latex
   (add-hook 'latex-mode-hook 'expl3-font-lock)
@@ -292,5 +295,9 @@
                        (flyspell-mode 1))))
 
 (setq flymake-show-diagnostics-at-end-of-line 'short)
+
+(use-package frimacs
+  :defer t
+  :init (setq frimacs-process-program "fricas -nosman"))
 
 ;;; init.el ends here

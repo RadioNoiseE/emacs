@@ -9,9 +9,8 @@
 
 (setq visual-bell t
       display-time-load-average nil
-      read-process-output-max (* 1024 1024 2))
-
-(setq frame-inhibit-implied-resize t
+      read-process-output-max (* 1024 1024 2)
+      frame-inhibit-implied-resize t
       frame-resize-pixelwise t
       default-frame-alist '((ns-transparent-titlebar . t)
                             (vertical-scroll-bar . nil)

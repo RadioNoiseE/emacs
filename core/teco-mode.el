@@ -242,11 +242,6 @@ TECO-64 looks for non whitespaces."
       font-lock-comment-face))))
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.te[sc]\\'"  . teco-mode))
-;;;###autoload
-(add-to-list 'file-coding-system-alist '("\\.te[sc]\\'"  . utf-8))
-
-;;;###autoload
 (define-derived-mode teco-mode prog-mode "TECO"
   :syntax-table teco-mode-syntax-table
   (setq font-lock-defaults '(teco-font-lock-keywords
@@ -262,3 +257,8 @@ TECO-64 looks for non whitespaces."
               #'teco-fontify-extend-region
               indent-line-function #'insert-tab
               electric-indent-mode nil))
+
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.te[sc]\\'"  . teco-mode))
+;;;###autoload
+(add-to-list 'file-coding-system-alist '("\\.te[sc]\\'"  . utf-8))
