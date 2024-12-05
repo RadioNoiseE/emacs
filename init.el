@@ -194,7 +194,7 @@
                                           "\\)")
                                  1 'font-lock-variable-name-face))))))
 
-(setq tex-directory "/tmp"
+(setq tex-directory temporary-file-directory
       tex-dvi-view-command "open -a Preview.app *"
       tex-print-file-extension ".pdf")
 
