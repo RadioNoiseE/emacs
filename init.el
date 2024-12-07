@@ -159,6 +159,9 @@
               ([return] . corfu-send)
               ([escape] . corfu-quit)))
 
+(use-package yasnippet
+  :hook (prog-mode . yas-minor-mode))
+
 (use-package vertico
   :hook (after-init . vertico-mode)
   :init
