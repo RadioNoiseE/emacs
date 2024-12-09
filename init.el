@@ -297,10 +297,4 @@
   :hook (text-mode . (lambda ()
                        (flyspell-mode 1))))
 
-(setq flymake-show-diagnostics-at-end-of-line 'short)
-
-(use-package frimacs
-  :defer t
-  :init (setq frimacs-process-program "fricas -nosman"))
-
 ;;; init.el ends here
