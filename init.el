@@ -2,9 +2,6 @@
 
 ;; This file bootstraps the configuration.
 
-(loaddefs-generate (concat user-emacs-directory "core")
-                   (concat user-emacs-directory "core/core-autoloads.el"))
-
 (mapc (lambda (dir)
         (add-to-list 'load-path (expand-file-name dir user-emacs-directory)))
       '("core"))
@@ -35,7 +32,11 @@
 (setq use-package-always-ensure t)
 
 (use-package core-autoloads
-  :load-path "core/")
+  :load-path "core/"
+  :hook (after-init . (lambda ()
+                        (message "Registered core autoloads")))
+  :init (loaddefs-generate (concat user-emacs-directory "core")
+                           (concat user-emacs-directory "core/core-autoloads.el")))
 
 (defun font-inject ()
   (when (display-graphic-p)
