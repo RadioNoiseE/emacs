@@ -19,8 +19,8 @@
       (while (re-search-forward "^\\([^=]+\\)=\\(.*\\)$" nil t)
         (let ((key (match-string 1))
               (val (match-string 2)))
-          (setenv key val)
           (when (string-equal key "PATH")
+            (setenv key val)
             (setq exec-path (split-string val path-separator))))))))
 
 (add-hook 'after-init-hook #'environment-update)
@@ -295,6 +295,7 @@
 
 (use-package flyspell
   :hook (text-mode . (lambda ()
-                       (flyspell-mode 1))))
+                       (flyspell-mode 1)))
+  :init (setq ispell-program-name "aspell"))
 
 ;;; init.el ends here
