@@ -33,7 +33,6 @@
 
 (use-package core-autoloads
   :load-path "core/"
-  :hook (after-init . (lambda ()))
   :init (loaddefs-generate (concat user-emacs-directory "core")
                            (concat user-emacs-directory "core/core-autoloads.el")))
 
