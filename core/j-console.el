@@ -12,7 +12,7 @@
   :group 'j
   :prefix "j-console-")
 
-(defcustom j-console-cmd "jc"
+(defcustom j-console-cmd "jconsole"
   "Name of the executable used for the J REPL session"
   :type 'string
   :group 'j-console)

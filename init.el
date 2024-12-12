@@ -33,8 +33,7 @@
 
 (use-package core-autoloads
   :load-path "core/"
-  :hook (after-init . (lambda ()
-                        (message "Registered core autoloads")))
+  :hook (after-init . (lambda ()))
   :init (loaddefs-generate (concat user-emacs-directory "core")
                            (concat user-emacs-directory "core/core-autoloads.el")))
 
@@ -71,6 +70,13 @@
           (lambda ()
             (when (derived-mode-p 'text-mode)
               (visual-line-mode))))
+
+(global-set-key (kbd "M-SPC") (lambda ()
+                                (interactive)
+                                (insert-char ?\u200B)))
+(global-set-key (kbd "M-¥") (lambda ()
+                              (interactive)
+                              (insert-char ?\u005C)))
 
 (setq modus-themes-common-palette-overrides
       '((fringe unspecified)))
@@ -137,11 +143,11 @@
          (c++-ts-mode . eglot-ensure)
          (tuareg-mode . eglot-ensure)
          (caml-mode . eglot-ensure)
-         (plain-tex-mode . eglot-ensure)
-         (latex-mode . eglot-ensure))
+         (plain-TeX-mode . eglot-ensure)
+         (LaTeX-mode . eglot-ensure))
   :config (with-eval-after-load 'eglot
-            (dolist (mode-server '((plain-tex-mode . ("digestif"))
-                                   (latex-mode . ("texlab"))
+            (dolist (mode-server '((plain-TeX-mode . ("digestif"))
+                                   (LaTeX-mode . ("texlab"))
                                    (c-ts-mode . ("clangd" "--header-insertion=never"))
                                    (c++-ts-mode . ("clangd" "--header-insertion=never"))))
               (add-to-list 'eglot-server-programs mode-server))))
@@ -180,9 +186,16 @@
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle)))
 
+(use-package auctex
+  :ensure t
+  :config
+  (setq-default TeX-engine 'luatex)
+  (setq TeX-parse-self t
+        TeX-view-program-list '(("Preview" "open -a Preview.app %o"))))
+
 (with-eval-after-load 'font-latex
-  (add-hook 'latex-mode-hook 'expl3-font-lock)
-  (add-hook 'doctex-mode-hook 'expl3-font-lock)
+  (add-hook 'LaTeX-mode-hook 'expl3-font-lock)
+  (add-hook 'docTeX-mode-hook 'expl3-font-lock)
   (defun expl3-font-lock ()
     (let ((signatures "NncVvoxefTFpwD")
           (vartypes '("clist" "dim" "fp" "int" "muskip" "seq" "skip"
@@ -198,90 +211,8 @@
                                           "\\)")
                                  1 'font-lock-variable-name-face))))))
 
-(setq tex-directory temporary-file-directory
-      tex-dvi-view-command "open -a Preview.app *"
-      tex-print-file-extension ".pdf")
-
 (use-package markdown-mode
   :defer t)
-
-(setq org-emphasis-regexp-components
-      (list (concat " \t('\"{" "[:nonascii:]")
-            (concat "- \t.,:!?;'\")}\\[" "[:nonascii:]")
-            " \t\r\n,\"'"
-            "."
-            1))
-
-(defun org-cjk-emph-patch (mark type)
-  (save-excursion
-    (let ((origin (point)))
-      (unless (bolp) (forward-char -1))
-      (let ((opening-re
-             (rx-to-string
-              `(seq (or line-start (any space ?- ?\( ?' ?\" ?\{ nonascii))
-                    ,mark
-                    (not space)))))
-        (when (looking-at opening-re)
-          (goto-char (1+ origin))
-          (let ((closing-re
-                 (rx-to-string
-                  `(seq
-                    (not space)
-                    (group ,mark)
-                    (or (any space ?- ?. ?, ?\; ?: ?! ?? ?' ?\" ?\) ?\} ?\\ ?\[
-                             nonascii)
-                        line-end)))))
-            (when (re-search-forward closing-re nil t)
-              (let ((closing (match-end 1)))
-                (goto-char closing)
-                (let* ((post-blank (skip-chars-forward " \t"))
-                       (contents-begin (1+ origin))
-                       (contents-end (1- closing)))
-                  (list type
-                        (append
-                         (list :begin origin
-                               :end (point)
-                               :post-blank post-blank)
-                         (if (memq type '(code verbatim))
-                             (list :value
-                                   (and (memq type '(code verbatim))
-                                        (buffer-substring
-                                         contents-begin contents-end)))
-                           (list :contents-begin contents-begin
-                                 :contents-end contents-end)))))))))))))
-
-(advice-add #'org-element--parse-generic-emphasis :override #'org-cjk-emph-patch)
-
-(with-eval-after-load 'org
-  (setq org-match-substring-regexp
-        (concat
-         "\\([0-9a-zA-Zα-γΑ-Ω]\\)\\([_^]\\)\\("
-         "\\(?:" (org-create-multibrace-regexp "{" "}" org-match-sexp-depth) "\\)"
-         "\\|"
-         "\\(?:" (org-create-multibrace-regexp "(" ")" org-match-sexp-depth) "\\)"
-         "\\|"
-         "\\(?:\\*\\|[+-]?[[:alnum:].,\\]*[[:alnum:]]\\)\\)")))
-
-(defadvice org-html-paragraph (before org-html-paragraph-advice
-                                      (paragraph contents info) activate)
-  (let* ((origin-contents (ad-get-arg 1))
-         (fix-regexp "[[:multibyte:]]")
-         (fixed-contents
-          (replace-regexp-in-string
-           (concat
-            "\\(" fix-regexp "\\) *\n *\\(" fix-regexp "\\)") "\\1\\2" origin-contents)))
-    (ad-set-arg 1 fixed-contents)))
-
-(defun unicode-zws ()
-  (interactive)
-  (insert-char ?\u200B))
-
-(defun ascii-bks ()
-  (interactive)
-  (insert-char ?\u005C))
-
-(global-set-key (kbd "M-SPC") 'unicode-zws)
-(global-set-key (kbd "M-¥") 'ascii-bks)
 
 (use-package tuareg
   :defer t)
