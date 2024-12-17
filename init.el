@@ -138,16 +138,9 @@
          (eldoc-mode . eldoc-box-hover-mode)))
 
 (use-package eglot
-  :hook ((c-ts-mode . eglot-ensure)
-         (c++-ts-mode . eglot-ensure)
-         (tuareg-mode . eglot-ensure)
-         (caml-mode . eglot-ensure)
-         (plain-TeX-mode . eglot-ensure)
-         (LaTeX-mode . eglot-ensure))
+  :hook ((c-ts-mode c++-ts-mode tuareg-mode caml-mode) . eglot-ensure)
   :config (with-eval-after-load 'eglot
-            (dolist (mode-server '((plain-TeX-mode . ("digestif"))
-                                   (LaTeX-mode . ("texlab"))
-                                   (c-ts-mode . ("clangd" "--header-insertion=never"))
+            (dolist (mode-server '((c-ts-mode . ("clangd" "--header-insertion=never"))
                                    (c++-ts-mode . ("clangd" "--header-insertion=never"))))
               (add-to-list 'eglot-server-programs mode-server))))
 
