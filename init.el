@@ -183,6 +183,7 @@
   :config
   (setq-default TeX-engine 'luatex)
   (setq TeX-parse-self t
+        TeX-check-TeX nil
         TeX-view-program-list '(("Preview" "open -a Preview.app %o"))))
 
 (with-eval-after-load 'font-latex
@@ -204,6 +205,9 @@
                                  1 'font-lock-variable-name-face))))))
 
 (use-package markdown-mode
+  :defer t)
+
+(use-package swift-mode
   :defer t)
 
 (use-package tuareg
