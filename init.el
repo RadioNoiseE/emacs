@@ -6,6 +6,8 @@
         (add-to-list 'load-path (expand-file-name dir user-emacs-directory)))
       '("core"))
 
+(setq-local file-name-handler-alist nil)
+
 (defun environment-update ()
   (interactive)
   (let* ((shell (or (getenv "SHELL") "/bin/sh"))
@@ -20,14 +22,25 @@
             (setenv key val)
             (setq exec-path (split-string val path-separator))))))))
 
-(add-hook 'after-init-hook #'environment-update)
+(environment-update) ;(add-hook 'after-init-hook #'environment-update)
 
 (with-eval-after-load 'package
   (add-to-list 'package-archives
                '("melpa" . "https://melpa.org/packages/")))
 
+(setq custom-file (make-temp-file "emacs-custom-"))
+
 (eval-when-compile
   (require 'use-package))
+
+(defun use-package-with-executable (orig package &rest body)
+  (let ((exec (plist-get body :with)))
+    (when exec
+      (setq body (remove :with (remove exec body))))
+    (if (or (not exec) (executable-find exec))
+        (apply orig package body))))
+
+(advice-add 'use-package :around #'use-package-with-executable)
 
 (setq use-package-always-ensure t)
 
@@ -178,7 +191,11 @@
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle)))
 
+(use-package markdown-mode
+  :defer t)
+
 (use-package auctex
+  :with "luatex"
   :ensure t
   :config
   (setq-default TeX-engine 'luatex)
@@ -204,24 +221,26 @@
                                           "\\)")
                                  1 'font-lock-variable-name-face))))))
 
-(use-package markdown-mode
-  :defer t)
-
 (use-package swift-mode
+  :with "swift"
   :defer t)
 
 (use-package tuareg
+  :with "ocaml"
   :defer t)
 
 (use-package proof-general
+  :with "coq"
   :defer t
   :init (setq proof-splash-enable nil
               proof-delete-empty-windows t))
 
 (use-package magit
+  :with "git"
   :defer t)
 
 (use-package flyspell
+  :with "aspell"
   :hook (text-mode . (lambda ()
                        (flyspell-mode 1)))
   :init (setq ispell-program-name "aspell"))
