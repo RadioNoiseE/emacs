@@ -68,15 +68,11 @@
 
 (setq-default indent-tabs-mode nil)
 
-(setq dired-use-ls-dired nil)
-(setq inhibit-startup-message t)
-(setq enable-recursive-minibuffers t)
-(setq word-wrap-by-category t)
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-(setq read-extended-command-predicate #'command-completion-default-include-p)
+(setq dired-use-ls-dired nil
+      inhibit-startup-message t
+      backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+      read-extended-command-predicate #'command-completion-default-include-p)
 
 (add-hook 'after-change-major-mode-hook
           (lambda ()
@@ -175,6 +171,9 @@
                                    (c++-ts-mode . ("clangd" "--header-insertion=never"))))
               (add-to-list 'eglot-server-programs mode-server))))
 
+(setq enable-recursive-minibuffers t
+      word-wrap-by-category t)
+
 (use-package corfu
   :hook (after-init . global-corfu-mode)
   :init (setq corfu-auto t
@@ -217,8 +216,8 @@
   :ensure t
   :config
   (setq-default TeX-engine 'luatex)
-  (setq TeX-parse-self t
-        TeX-check-TeX nil
+  (setq TeX-check-TeX nil
+        TeX-parse-self t
         TeX-view-program-list '(("Preview" "open -a Preview.app %o"))))
 
 (with-eval-after-load 'font-latex
