@@ -45,7 +45,7 @@
 (setq use-package-always-ensure t)
 
 (use-package core-autoloads
-  :load-path "core/"
+  :load-path "core"
   :init (loaddefs-generate (concat user-emacs-directory "core")
                            (concat user-emacs-directory "core/core-autoloads.el")))
 
@@ -91,23 +91,41 @@
                               (insert-char ?\u005C)))
 
 (setq modus-themes-common-palette-overrides
-      '((fringe unspecified)))
+      '((fringe unspecified)
+        (border-mode-line-active cyan-faint)))
 
 (mapc #'disable-theme custom-enabled-themes)
 (load-theme 'modus-operandi-tritanopia)
 
 (setq mode-line-right-align-edge 'right-margin)
 
-(setq-default mode-line-format
-              (list
-               '(:eval (propertize " %@" 'face 'font-lock-constant-face))
-               '(:eval (propertize "%t%Z" 'face 'font-lock-string-face))
-               '(:eval (propertize "%*%+" 'face 'font-lock-warning-face))
-               '(:eval (propertize " %F" 'face 'font-lock-keyword-face)) " ("
-               '(:eval (propertize "%l" 'face 'font-lock-type-face)) ","
-               '(:eval (propertize "%c" 'face 'font-lock-type-face)) ") "
-               'mode-line-format-right-align " [" mode-name "] "
-               '(:eval (propertize "Mach-O " 'face 'font-lock-escape-face))))
+(defun mode-line-compose (indicator name preamble postamble)
+  (list `(:propertize ,indicator face (:foreground "#ffffff" :background "#004f5f"))
+        `(:propertize ,name face (:foreground "#193668"))
+        'mode-line-format-right-align
+        `(:propertize ,preamble face (:foreground "#193668"))
+        '(:propertize "<<" face (:foreground "#595959"))
+        `(:propertize ,postamble face ((:foreground "#004f5f") bold))))
+
+(defun mode-line-status ()
+  (cond ((and buffer-file-name (buffer-modified-p)) "RW")
+        (buffer-read-only "RO")
+        (t "WR")))
+
+(defun mode-line-branch ()
+  (if vc-mode
+      (let ((backend (vc-backend buffer-file-name)))
+        (concat ", #" (substring-no-properties
+                       vc-mode (+ (if (eq backend 'Hg) 2 3) 2))))))
+
+(defun mode-line-default ()
+  (let ((status '(" " (:eval (mode-line-status)) " "))
+        (file '(" %b "))
+        (mode '(" " mode-name (:eval (mode-line-branch)) " "))
+        (position '((-3 "%p") " %l:%c ")))
+    (mode-line-compose status file position mode)))
+
+(setq-default mode-line-format (mode-line-default))
 
 (use-package treesit
   :ensure nil)
