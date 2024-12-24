@@ -9,9 +9,9 @@
             (lambda () (setq gc-cons-percentage 0.1
                              gc-cons-threshold normal-gc-cons-threshold))))
 
-(setq visual-bell t
+(setq read-process-output-max (* 4 1024 1024)
       display-time-load-average nil
-      read-process-output-max (* 1024 1024 2)
+      process-adaptive-read-buffering nil
       frame-inhibit-implied-resize t
       frame-resize-pixelwise t
       default-frame-alist '((ns-transparent-titlebar . nil)
