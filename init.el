@@ -36,7 +36,7 @@
 (defun use-package-with-executable (orig package &rest body)
   (let ((exec (plist-get body :with)))
     (when exec
-      (setq body (remove :with (remove exec body))))
+      (setq body (seq-difference body (list :with exec))))
     (if (or (not exec) (executable-find exec))
         (apply orig package body))))
 
