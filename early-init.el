@@ -14,11 +14,11 @@
       process-adaptive-read-buffering nil
       frame-inhibit-implied-resize t
       frame-resize-pixelwise t
-      default-frame-alist '((ns-transparent-titlebar . nil)
+      default-frame-alist '((width . 150)
+                            (height . 50)
                             (vertical-scroll-bar . nil)
                             (horizontal-scroll-bar . nil)
-                            (width . 150)
-                            (height . 50)))
+                            (ns-transparent-titlebar t)))
 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
