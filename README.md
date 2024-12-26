@@ -12,7 +12,7 @@ An Emacs 30 compiled with treesit support is required.
 ## Install
 
 ```sh
-git clone git@github.com:RadioNoiseE/emacs.git $HOME/.emacs.d
+git clone --depth 1 https://github.com/RadioNoiseE/emacs $HOME/.emacs.d
 ```
 
 To install all language grammar for treesitter, evaluate:
