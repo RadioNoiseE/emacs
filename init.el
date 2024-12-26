@@ -252,7 +252,7 @@
   :init (setq inferior-lisp-program "sbcl"))
 
 (use-package proof-general
-  :with "coq"
+  :with "coqc"
   :defer t
   :init (setq proof-splash-enable nil
               proof-delete-empty-windows t))
