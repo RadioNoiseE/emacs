@@ -28,7 +28,7 @@
   (add-to-list 'package-archives
                '("melpa" . "https://melpa.org/packages/")))
 
-(setq custom-file (make-temp-file "emacs-custom-"))
+(setq custom-file (make-temp-file "custom.el"))
 
 (eval-when-compile
   (require 'use-package))
@@ -245,6 +245,11 @@
 (use-package tuareg
   :with "ocaml"
   :defer t)
+
+(use-package sly
+  :with "sbcl"
+  :defer t
+  :init (setq inferior-lisp-program "sbcl"))
 
 (use-package proof-general
   :with "coq"
