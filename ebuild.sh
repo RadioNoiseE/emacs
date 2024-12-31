@@ -6,9 +6,9 @@ cat <<'EOF'
 -----------------------------------------------------------------------------------
 This script automates the build process of Emacs (more specifically the igc branch)
 on Darwin and other UNIX platforms.  The dependencies are `git', `curl', and all
-the dependencies a noremal Emacs build requires.  You don't need to install the
+the dependencies a normal Emacs build requires.  You don't need to install the
 igc specific dependencies and won't need GNU makeinfo for document generation for
-a non-release Emacs as this script will take care of them.
+a non-release Emacs as this script will take care of these.
 
 You are recommended to create the working space in `/tmp' and drop in this script.
 The options passed to `./configure' Emacs is specified in the `eflg' array below.
