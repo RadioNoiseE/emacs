@@ -79,9 +79,6 @@
             (when (derived-mode-p 'text-mode)
               (visual-line-mode))))
 
-(global-set-key (kbd "M-SPC") (lambda ()
-                                (interactive)
-                                (insert-char ?\u200B)))
 (global-set-key (kbd "M-¥") (lambda ()
                               (interactive)
                               (insert-char ?\u005C)))
@@ -156,9 +153,8 @@
              (add-to-list 'major-mode-remap-alist `(,name-ts-mode . ,name-mode)))))))
 
 (use-package which-key
-  :config
-  (which-key-setup-minibuffer)
-  (which-key-mode))
+  :hook (after-init . which-key-mode)
+  :init (which-key-setup-minibuffer))
 
 (use-package eldoc-box
   :hook ((eglot-managed-mode . eldoc-box-hover-mode)
@@ -204,7 +200,7 @@
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator))
 
 (use-package marginalia
-  :init (marginalia-mode)
+  :hook (after-init . marginalia-mode)
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle)))
 
@@ -213,7 +209,7 @@
 
 (use-package auctex
   :with "luatex"
-  :ensure t
+  :defer t
   :config
   (setq-default TeX-engine 'luatex)
   (setq TeX-check-TeX nil
