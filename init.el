@@ -66,6 +66,8 @@
 (delete-selection-mode t)
 (electric-pair-mode t)
 
+(select-frame-set-input-focus (selected-frame))
+
 (setq-default indent-tabs-mode nil)
 
 (setq dired-use-ls-dired nil
