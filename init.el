@@ -206,6 +206,12 @@
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle)))
 
+(use-package nxml-mode
+  :ensure nil
+  :defer t
+  :config (add-to-list 'rng-schema-locating-files
+                       (expand-file-name "schema/schemas.xml" user-emacs-directory)))
+
 (use-package markdown-mode
   :defer t)
 
