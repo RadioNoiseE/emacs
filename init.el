@@ -134,16 +134,23 @@
         (json "https://github.com/tree-sitter/tree-sitter-json")
         (rust "https://github.com/tree-sitter/tree-sitter-rust")))
 
-(setq treesit-auto-fallback-alist
+(setq treesit-mask-alist
+      '((c++ . cpp)))
+
+(setq treesit-fallback-alist
       '((html-ts-mode . mhtml-mode)))
+
+(defun treesit-normalize-name (name)
+  (or (car (rassq name treesit-mask-alist))
+      name))
 
 (dolist (language-source treesit-language-source-alist)
   (let* ((name (car language-source))
-         (name-ts-mode (intern (concat (symbol-name name) "-ts-mode")))
-         (fallback-assoc (assq name-ts-mode treesit-auto-fallback-alist))
+         (name-ts-mode (intern (concat (symbol-name (treesit-normalize-name name)) "-ts-mode")))
+         (fallback-assoc (assq name-ts-mode treesit-fallback-alist))
          (fallback-name (cdr fallback-assoc))
          (name-mode (or fallback-name
-                        (intern (concat (symbol-name name) "-mode"))))
+                        (intern (concat (symbol-name (treesit-normalize-name name)) "-mode"))))
          (name-mode-bound-p (fboundp name-mode))
          (skip-remap-p (and fallback-assoc
                             (not (cdr fallback-assoc)))))
