@@ -2,6 +2,8 @@
 <locatingRules xmlns="http://thaiopensource.com/ns/locating-rules/1.0">
   <namespace ns="https://kekkan.org/RsML" typeId="RsML"/>
   <namespace ns="http://www.w3.org/1998/Math/MathML" typeId="MathML"/>
+  <namespace ns="http://www.w3.org/2005/Atom" typeId="Atom"/>
   <typeId id="RsML" uri="rsml.rnc"/>
   <typeId id="MathML" uri="mathml3.rnc"/>
+  <typeId id="Atom" uri="atom.rnc"/>
 </locatingRules>
