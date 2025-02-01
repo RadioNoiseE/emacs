@@ -22,13 +22,13 @@
             (setenv key val)
             (setq exec-path (split-string val path-separator))))))))
 
-(environment-update) ;(add-hook 'after-init-hook #'environment-update)
+(environment-update)
 
 (with-eval-after-load 'package
   (add-to-list 'package-archives
                '("melpa" . "https://melpa.org/packages/")))
 
-(setq custom-file (make-temp-file "custom.el"))
+(setq custom-file (make-temp-file "custom" nil ".el"))
 
 (eval-when-compile
   (require 'use-package))
@@ -121,6 +121,40 @@
     (mode-line-compose status file position mode)))
 
 (setq-default mode-line-format (mode-line-default))
+
+(defun eww-extract-xslt ()
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "<\\?xml-stylesheet [^>]*href=['\"]\\([^'\"]+\\)['\"]" nil t)
+      (let ((xslt (match-string 1))
+            (link (url-generic-parse-url (eww-current-url))))
+        (if (file-name-absolute-p xslt)
+            (progn
+              (setf (url-filename link) xslt)
+              (url-recreate-url link))
+          (let* ((path (file-name-directory (url-filename link)))
+                 (xslt (expand-file-name xslt path)))
+            (setf (url-filename link) xslt)
+            (url-recreate-url link)))))))
+
+(defun eww-render-xslt ()
+  (interactive)
+  (when (or (string-match "\\.xml$" (eww-current-url))
+            (save-excursion
+              (goto-char (point-min))
+              (or (looking-at "<\\?xml")
+                  (re-search-forward "<\\?xml" nil t))))
+    (when-let* ((link (eww-extract-xslt))
+                (xslt (make-temp-file "sty" nil ".xsl"))
+                (xml (make-temp-file "src" nil ".xml"))
+                (html (make-temp-file "res" nil ".html"))
+                (command (format "xsltproc %S %S > %S" xslt xml html)))
+      (url-copy-file link xslt t)
+      (append-to-file nil nil xml)
+      (call-process-shell-command command nil nil)
+      (eww-open-file html))))
+
+(add-hook 'eww-after-render-hook #'eww-render-xslt)
 
 (use-package treesit
   :ensure nil)
