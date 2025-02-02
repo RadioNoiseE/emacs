@@ -138,7 +138,6 @@
             (url-recreate-url link)))))))
 
 (defun eww-render-xslt ()
-  (interactive)
   (when (or (string-match "\\.xml$" (eww-current-url))
             (save-excursion
               (goto-char (point-min))
