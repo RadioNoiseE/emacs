@@ -144,9 +144,9 @@
               (or (looking-at "<\\?xml")
                   (re-search-forward "<\\?xml" nil t))))
     (when-let* ((link (eww-extract-xslt))
-                (xslt (make-temp-file "sty" nil ".xsl"))
-                (xml (make-temp-file "src" nil ".xml"))
-                (html (make-temp-file "res" nil ".html"))
+                (xslt (make-temp-file "eww" nil ".xsl"))
+                (xml (make-temp-file "eww" nil ".xml"))
+                (html (make-temp-file "eww" nil ".html"))
                 (command (format "xsltproc %S %S > %S" xslt xml html)))
       (url-copy-file link xslt t)
       (append-to-file nil nil xml)
@@ -158,20 +158,15 @@
 (use-package treesit
   :ensure nil)
 
-(setq treesit-language-source-alist
-      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-        (c "https://github.com/tree-sitter/tree-sitter-c")
-        (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
-        (css "https://github.com/tree-sitter/tree-sitter-css")
-        (html "https://github.com/tree-sitter/tree-sitter-html")
-        (json "https://github.com/tree-sitter/tree-sitter-json")
-        (rust "https://github.com/tree-sitter/tree-sitter-rust")))
-
-(setq treesit-mask-alist
-      '((c++ . cpp)))
-
-(setq treesit-fallback-alist
-      '((html-ts-mode . mhtml-mode)))
+(setq treesit-mask-alist '((c++ . cpp))
+      treesit-fallback-alist '((html-ts-mode . mhtml-mode))
+      treesit-language-source-alist '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+                                      (c "https://github.com/tree-sitter/tree-sitter-c")
+                                      (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+                                      (css "https://github.com/tree-sitter/tree-sitter-css")
+                                      (html "https://github.com/tree-sitter/tree-sitter-html")
+                                      (json "https://github.com/tree-sitter/tree-sitter-json")
+                                      (rust "https://github.com/tree-sitter/tree-sitter-rust")))
 
 (defun treesit-normalize-name (name)
   (or (car (rassq name treesit-mask-alist))
