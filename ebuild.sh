@@ -28,7 +28,7 @@ LDFLAGS="-Wl,-O3"
 # Emacs Source Prepare
 # --------------------
 
-git clone -b 'scratch/igc' --depth 1 https://git.savannah.gnu.org/git/emacs.git esrc
+git clone -b 'feature/igc' --depth 1 https://github.com/emacs-mirror/emacs.git esrc
 
 # ------------------------
 # Install Makeinfo Locally
