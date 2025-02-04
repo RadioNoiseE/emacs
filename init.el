@@ -244,8 +244,7 @@
               ("M-A" . marginalia-cycle)))
 
 (setq user-mail-address "j18516785606@icloud.com"
-      user-full-name "RnE"
-      auth-sources '("~/.authinfo" "~/.authinfo.gpg"))
+      user-full-name "RnE")
 
 (use-package notmuch
   :defer t
