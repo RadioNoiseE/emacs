@@ -155,6 +155,8 @@
 
 (add-hook 'eww-after-render-hook #'eww-render-xslt)
 
+(setq shr-use-xwidgets-for-media t)
+
 (use-package treesit
   :ensure nil)
 
@@ -240,6 +242,19 @@
   :hook (after-init . marginalia-mode)
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle)))
+
+(setq user-mail-address "j18516785606@icloud.com"
+      user-full-name "RnE"
+      auth-sources '("~/.authinfo" "~/.authinfo.gpg"))
+
+(use-package notmuch
+  :defer t
+  :config (setq notmuch-show-logo nil))
+
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-user "j18516785606@icloud.com"
+      smtpmail-smtp-server "smtp.mail.me.com"
+      smtpmail-smtp-service 587)
 
 (use-package nxml-mode
   :ensure nil
