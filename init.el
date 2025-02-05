@@ -33,14 +33,13 @@
 (eval-when-compile
   (require 'use-package))
 
-(defun use-package-with-executable (orig package &rest body)
+(define-advice use-package
+    (:around (orig package &rest body) use-package-with-executable)
   (let ((exec (plist-get body :with)))
     (when exec
       (setq body (seq-difference body (list :with exec))))
     (if (or (not exec) (executable-find exec))
         (apply orig package body))))
-
-(advice-add 'use-package :around #'use-package-with-executable)
 
 (setq use-package-always-ensure t)
 
@@ -293,6 +292,10 @@
     'wl-draft-send
     'wl-draft-kill
     'mail-send-hook))
+
+(define-advice wl-demo-insert-image
+    (:before (_) wl-demo-normalize)
+  (set-face-background 'wl-highlight-demo-face nil))
 
 (use-package nxml-mode
   :ensure nil
