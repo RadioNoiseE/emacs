@@ -72,6 +72,7 @@
 
 (setq dired-use-ls-dired nil
       inhibit-startup-message t
+      epg-pinentry-mode 'loopback
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
       read-extended-command-predicate #'command-completion-default-include-p)
@@ -246,14 +247,52 @@
 (setq user-mail-address "j18516785606@icloud.com"
       user-full-name "RnE")
 
-(use-package notmuch
+(use-package wanderlust
   :defer t
-  :config (setq notmuch-show-logo nil))
-
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-user "j18516785606@icloud.com"
-      smtpmail-smtp-server "smtp.mail.me.com"
-      smtpmail-smtp-service 587)
+  :init
+  (setq mail-user-agent 'wl-user-agent
+        elmo-passwd-storage-type 'auth-source
+        mime-view-type-subtype-score-alist
+        '(((text . plain) . 2)
+          ((text . html) . 1))
+        wl-smtp-connection-type 'starttls
+        wl-smtp-authenticate-type "plain"
+        wl-smtp-posting-user "j18516785606@icloud.com"
+        wl-smtp-posting-server "smtp.mail.me.com"
+        wl-smtp-posting-port 587
+        wl-local-domain "icloud.com"
+        wl-message-id-domain "smtp.mail.me.com"
+        wl-temporary-file-directory "~/.wl"
+        wl-summary-width nil
+        wl-summary-line-format "%n%T%P %W:%M/%D %h:%m %36(%t%[%c %f %]%) %s"
+        wl-thread-indent-level 2
+        wl-thread-have-younger-brother-str "+"
+        wl-thread-youngest-child-str "+"
+        wl-thread-vertical-str " "
+        wl-thread-horizontal-str "-"
+        wl-thread-space-str " "
+        wl-message-window-size '(2 . 5)
+        wl-message-ignored-field-list '(".")
+        wl-message-visible-field-list
+        '("^Subject:"
+          "^\\(To\\|Cc\\):"
+          "^\\(From\\|Reply-To\\):"
+          "^\\(Posted\\|Date\\):"
+          "^Organization:"
+          "^X-Face\\(-[0-9]+\\)?:")
+        wl-message-sort-field-list
+        '("^Subject"
+          "^\\(To\\|Cc\\)"
+          "^\\(From\\|Reply-To\\)"
+          "^\\(Posted\\|Date\\)"
+          "^Organization")
+        wl-highlight-x-face-function 'x-face-decode-message-header)
+  (define-mail-user-agent
+    'wl-user-agent
+    'wl-user-agent-compose
+    'wl-draft-send
+    'wl-draft-kill
+    'mail-send-hook))
 
 (use-package nxml-mode
   :ensure nil
@@ -272,24 +311,6 @@
   (setq TeX-check-TeX nil
         TeX-parse-self t
         TeX-view-program-list '(("Preview" "open -a Preview.app %o"))))
-
-(with-eval-after-load 'font-latex
-  (add-hook 'LaTeX-mode-hook 'expl3-font-lock)
-  (add-hook 'docTeX-mode-hook 'expl3-font-lock)
-  (defun expl3-font-lock ()
-    (let ((signatures "NncVvoxefTFpwD")
-          (vartypes '("clist" "dim" "fp" "int" "muskip" "seq" "skip"
-                      "str" "tl" "bool" "box" "coffin" "flag" "fparray"
-                      "intarray" "ior" "iow" "prop" "regex")))
-      (font-lock-add-keywords nil
-                              `((,(concat "\\(\\\\\\(?:@@_\\|\\(?:__\\)?[a-zA-Z]+_\\)[a-zA-Z_]+\\)"
-                                          "\\(:[" signatures "]*\\)")
-                                 . ((1 'font-lock-keyword-face)
-                                    (2 'font-lock-type-face)))
-                                (,(concat "\\(\\\\[lgc]_[a-zA-Z@_]+"
-                                          "_\\(?:" (mapconcat #'identity vartypes "\\|") "\\)\\_>"
-                                          "\\)")
-                                 1 'font-lock-variable-name-face))))))
 
 (use-package swift-mode
   :with "swift"
