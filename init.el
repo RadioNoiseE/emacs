@@ -67,10 +67,15 @@
 
 (select-frame-set-input-focus (selected-frame))
 
-(setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil
+              bidi-display-reordering nil)
 
 (setq dired-use-ls-dired nil
       inhibit-startup-message t
+      bidi-inhibit-bpa t
+      long-line-threshold 1000
+      large-hscroll-threshold 1000
+      syntax-wholeline-max 1000
       epg-pinentry-mode 'loopback
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
