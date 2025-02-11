@@ -207,7 +207,8 @@
 (use-package eglot
   :hook ((c-ts-mode c++-ts-mode tuareg-mode caml-mode) . eglot-ensure)
   :config (with-eval-after-load 'eglot
-            (dolist (mode-server '((c++-ts-mode . ("clangd" "-std=c++20"))))
+            (dolist (mode-server '((c-ts-mode . ("clangd" "--header-insertion=never"))
+                                   (c++-ts-mode . ("clangd" "--header-insertion=never"))))
               (add-to-list 'eglot-server-programs mode-server))))
 
 (setq enable-recursive-minibuffers t
