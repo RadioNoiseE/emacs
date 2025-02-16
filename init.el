@@ -57,8 +57,11 @@
 
 (add-to-list 'face-font-rescale-alist '("IBM 3270" . 1.24))
 
-(add-hook 'window-setup-hook #'font-inject)
-(add-hook 'server-after-make-frame-hook #'font-inject)
+(add-hook 'window-setup-hook
+          'font-inject)
+
+(add-hook 'server-after-make-frame-hook
+          'font-inject)
 
 (pixel-scroll-precision-mode t)
 (global-auto-revert-mode t)
@@ -79,12 +82,14 @@
       epg-pinentry-mode 'loopback
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
-      read-extended-command-predicate #'command-completion-default-include-p)
+      read-extended-command-predicate 'command-completion-default-include-p)
+
+(defun refine-line-break ()
+  (when (derived-mode-p 'text-mode)
+    (visual-line-mode)))
 
 (add-hook 'after-change-major-mode-hook
-          (lambda ()
-            (when (derived-mode-p 'text-mode)
-              (visual-line-mode))))
+          'refine-line-break)
 
 (global-set-key (kbd "M-¥") (lambda ()
                               (interactive)
@@ -94,7 +99,7 @@
       '((fringe unspecified)
         (border-mode-line-active cyan-faint)))
 
-(mapc #'disable-theme custom-enabled-themes)
+(mapc 'disable-theme custom-enabled-themes)
 (load-theme 'modus-operandi-tritanopia)
 
 (setq mode-line-right-align-edge 'right-margin)
@@ -158,7 +163,8 @@
       (call-process-shell-command command nil nil)
       (eww-open-file html))))
 
-(add-hook 'eww-after-render-hook #'eww-render-xslt)
+(add-hook 'eww-after-render-hook
+          'eww-render-xslt)
 
 (setq shr-use-xwidgets-for-media t)
 
@@ -241,7 +247,8 @@
                    crm-separator)
                   (car args))
           (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator))
+  (advice-add 'completing-read-multiple
+              :filter-args 'crm-indicator))
 
 (use-package marginalia
   :hook (after-init . marginalia-mode)
@@ -256,9 +263,6 @@
   :init
   (setq mail-user-agent 'wl-user-agent
         elmo-passwd-storage-type 'auth-source
-        mime-view-type-subtype-score-alist
-        '(((text . plain) . 2)
-          ((text . html) . 1))
         wl-smtp-connection-type 'starttls
         wl-smtp-authenticate-type "plain"
         wl-smtp-posting-user "j18516785606@icloud.com"
@@ -299,8 +303,58 @@
     'mail-send-hook))
 
 (define-advice wl-demo-insert-image
-    (:before (_) wl-demo-normalize)
+    (:before (_itype) wl-demo-normalize)
   (set-face-background 'wl-highlight-demo-face nil))
+
+(eval-when-compile
+  (require 'xwidget))
+
+(define-derived-mode wl-xwidget-mode messages-buffer-mode "XWL"
+  (defvar-local wl-xwidget-object nil))
+
+(defun xwidget-wl-window-remnant (window)
+  (let ((total (xwidget-window-inside-pixel-height window))
+        (remnant 0))
+    (save-excursion
+      (goto-char (point-min))
+      (while (< (point) (- (point-max) 2))
+        (setq remnant (+ remnant (line-pixel-height)))
+        (forward-line 1)))
+    (- total (+ remnant 6))))
+
+(defun xwidget-wl-window-adjust (frame)
+  (walk-windows (lambda (window)
+                  (with-current-buffer (window-buffer window)
+                    (when (eq major-mode 'wl-xwidget-mode)
+                      (xwidget-resize wl-xwidget-object
+                                      (xwidget-window-inside-pixel-width window)
+                                      (xwidget-wl-window-remnant window))))) 'none frame))
+
+(add-to-list 'window-size-change-functions
+             'xwidget-wl-window-adjust)
+
+(define-advice wl-message-redisplay
+    (:before (&rest args) xwidget-wl-window-dispose)
+  (when wl-message-buffer
+    (with-current-buffer wl-message-buffer
+      (when (eq major-mode 'wl-xwidget-mode)
+        (delete-window (get-buffer-window wl-message-buffer))))))
+
+(define-advice mime-shr-preview-text/html
+    (:override (entity _situation) xwidget-wl-render-html)
+  (let ((inhibit-read-only t))
+    (insert ".")
+    (let* ((cursor (- (point-max) 1))
+           (source (with-temp-buffer
+                     (mime-insert-text-content entity)
+                     (buffer-string)))
+           (cookie (make-temp-file "xwidget" nil ".html"))
+           (object (xwidget-insert cursor 'webkit (buffer-name) 1 1)))
+      (setq major-mode 'wl-xwidget-mode
+            wl-xwidget-object object)
+      (set-xwidget-query-on-exit-flag object nil)
+      (with-temp-file cookie (insert source))
+      (xwidget-webkit-goto-uri object (concat "file://" cookie)))))
 
 (use-package nxml-mode
   :ensure nil
