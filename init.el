@@ -23,6 +23,8 @@
             (setenv key val)
             (setq exec-path (split-string val path-separator))))))))
 
+(setq inhibit-startup-message t)
+
 (environment-update)
 
 (with-eval-after-load 'package
@@ -75,15 +77,13 @@
               bidi-display-reordering nil)
 
 (setq dired-use-ls-dired nil
-      inhibit-startup-message t
       bidi-inhibit-bpa t
       long-line-threshold 1000
       large-hscroll-threshold 1000
       syntax-wholeline-max 1000
       epg-pinentry-mode 'loopback
       backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
-      read-extended-command-predicate 'command-completion-default-include-p)
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 (defun refine-line-break ()
   (when (derived-mode-p 'text-mode)
@@ -219,7 +219,8 @@
               (add-to-list 'eglot-server-programs mode-server))))
 
 (setq enable-recursive-minibuffers t
-      word-wrap-by-category t)
+      word-wrap-by-category t
+      read-extended-command-predicate 'command-completion-default-include-p)
 
 (use-package corfu
   :hook (after-init . global-corfu-mode)
@@ -239,17 +240,7 @@
   :hook (prog-mode . yas-minor-mode))
 
 (use-package vertico
-  :hook (after-init . vertico-mode)
-  :init
-  (defun crm-indicator (args)
-    (cons (format "[CRM%s] %s"
-                  (replace-regexp-in-string
-                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                   crm-separator)
-                  (car args))
-          (cdr args)))
-  (advice-add 'completing-read-multiple
-              :filter-args 'crm-indicator))
+  :hook (after-init . vertico-mode))
 
 (use-package marginalia
   :hook (after-init . marginalia-mode)
