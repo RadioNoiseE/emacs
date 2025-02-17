@@ -309,9 +309,6 @@
 (eval-when-compile
   (require 'xwidget))
 
-(define-derived-mode wl-xwidget-mode messages-buffer-mode "XWL"
-  (defvar-local wl-xwidget-object nil))
-
 (defun xwidget-wl-window-remnant (window)
   (let ((total (xwidget-window-inside-pixel-height window))
         (remnant 0))
@@ -325,20 +322,18 @@
 (defun xwidget-wl-window-adjust (frame)
   (walk-windows (lambda (window)
                   (with-current-buffer (window-buffer window)
-                    (when (eq major-mode 'wl-xwidget-mode)
-                      (xwidget-resize wl-xwidget-object
+                    (when (or (eq major-mode 'wl-message-mode)
+                              (eq major-mode 'mime-view-mode))
+                      (xwidget-resize (car (get-buffer-xwidgets (buffer-name)))
                                       (xwidget-window-inside-pixel-width window)
                                       (xwidget-wl-window-remnant window))))) 'none frame))
 
+(define-advice wl-summary-set-message-buffer-or-redisplay
+    (:after (&rest _args) xwidget-wl-window-init)
+  (xwidget-wl-window-adjust (selected-frame)))
+
 (add-to-list 'window-size-change-functions
              'xwidget-wl-window-adjust)
-
-(define-advice wl-message-redisplay
-    (:before (&rest args) xwidget-wl-window-dispose)
-  (when wl-message-buffer
-    (with-current-buffer wl-message-buffer
-      (when (eq major-mode 'wl-xwidget-mode)
-        (delete-window (get-buffer-window wl-message-buffer))))))
 
 (define-advice mime-shr-preview-text/html
     (:override (entity _situation) xwidget-wl-render-html)
@@ -350,8 +345,6 @@
                      (buffer-string)))
            (cookie (make-temp-file "xwidget" nil ".html"))
            (object (xwidget-insert cursor 'webkit (buffer-name) 1 1)))
-      (setq major-mode 'wl-xwidget-mode
-            wl-xwidget-object object)
       (set-xwidget-query-on-exit-flag object nil)
       (with-temp-file cookie (insert source))
       (xwidget-webkit-goto-uri object (concat "file://" cookie)))))
