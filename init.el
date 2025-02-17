@@ -302,11 +302,16 @@
   (require 'xwidget))
 
 (defun xwidget-wl-window-remnant (window)
-  (let ((total (xwidget-window-inside-pixel-height window))
-        (remnant 0))
+  (when-let* ((object (next-single-property-change (point-min) 'display))
+              (total (xwidget-window-inside-pixel-height window))
+              (remnant 0))
     (save-excursion
       (goto-char (point-min))
-      (while (< (point) (- (point-max) 2))
+      (while (< (point) object)
+        (setq remnant (+ remnant (line-pixel-height)))
+        (forward-line 1))
+      (goto-char (+ object 2))
+      (while (< (point) (point-max))
         (setq remnant (+ remnant (line-pixel-height)))
         (forward-line 1)))
     (- total (+ remnant 6))))
@@ -316,9 +321,10 @@
                   (with-current-buffer (window-buffer window)
                     (when (or (eq major-mode 'wl-message-mode)
                               (eq major-mode 'mime-view-mode))
-                      (xwidget-resize (car (get-buffer-xwidgets (buffer-name)))
-                                      (xwidget-window-inside-pixel-width window)
-                                      (xwidget-wl-window-remnant window))))) 'none frame))
+                      (when-let* ((xwidget (car (get-buffer-xwidgets (buffer-name))))
+                                  (width (xwidget-window-inside-pixel-width window))
+                                  (height (xwidget-wl-window-remnant window)))
+                        (xwidget-resize xwidget width height)))) 'none frame)))
 
 (define-advice wl-summary-set-message-buffer-or-redisplay
     (:after (&rest _args) xwidget-wl-window-init)
