@@ -1,6 +1,7 @@
 ;;; init.el -*- lexical-binding: t -*-
 
 ;; This file bootstraps the configuration.
+;; Copyright (C) 2024, 2025 RadioNoiseE
 
 (mapc (lambda (dir)
         (add-to-list 'load-path (expand-file-name dir user-emacs-directory)))

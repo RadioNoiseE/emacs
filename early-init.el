@@ -1,6 +1,7 @@
 ;;; early-init.el -*- lexical-binding: t -*-
 
 ;; This file optimizes the startup procedure.
+;; Copyright (C) 2024, 2025 RadioNoiseE
 
 (setq read-process-output-max (* 4 1024 1024)
       display-time-load-average nil
