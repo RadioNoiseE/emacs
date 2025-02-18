@@ -3,98 +3,74 @@
 ;; This file bootstraps the configuration.
 ;; Copyright (C) 2024, 2025 RadioNoiseE
 
-(mapc (lambda (dir)
-        (add-to-list 'load-path (expand-file-name dir user-emacs-directory)))
-      '("core"))
-
 (setq-local file-name-handler-alist nil)
 
-(defun environment-update ()
-  (interactive)
+(setq inhibit-startup-message t
+      custom-file (make-temp-file "custom" nil ".el"))
+
+(mapc (lambda (folder)
+        (add-to-list 'load-path
+                     (expand-file-name folder user-emacs-directory)))
+      '("core"))
+
+(defun env-flush ()
   (let* ((shell (or (getenv "SHELL") "/bin/sh"))
          (command (format "%s -l -c 'env'" shell)))
     (with-temp-buffer
       (call-process-shell-command command nil t)
       (goto-char (point-min))
       (while (re-search-forward "^\\([^=]+\\)=\\(.*\\)$" nil t)
-        (let ((key (match-string 1))
-              (val (match-string 2)))
-          (when (string-equal key "PATH")
-            (setenv key val)
-            (setq exec-path (split-string val path-separator))))))))
-
-(setq inhibit-startup-message t)
-
-(environment-update)
+        (when-let* ((variable (match-string 1))
+                    (value (match-string 2)))
+          (when (string= variable "PATH")
+            (setenv variable value)
+            (setq exec-path (split-string value path-separator))))))))
 
 (with-eval-after-load 'package
   (add-to-list 'package-archives
                '("melpa" . "https://melpa.org/packages/")))
 
-(setq custom-file (make-temp-file "custom" nil ".el"))
-
 (eval-when-compile
   (require 'use-package))
 
-(define-advice use-package
-    (:around (orig package &rest body) use-package-with-executable)
-  (let ((exec (plist-get body :with)))
-    (when exec
-      (setq body (seq-difference body (list :with exec))))
-    (if (or (not exec) (executable-find exec))
-        (apply orig package body))))
+(with-eval-after-load 'use-package
+  (env-flush))
 
 (setq use-package-always-ensure t)
 
+(define-advice use-package
+    (:around (orig package &rest body) use-with-binary)
+  (let ((executable (plist-get body :with)))
+    (when executable
+      (setq body (seq-difference body `(:with ,executable))))
+    (if (or (not executable) (executable-find executable))
+        (apply orig package body))))
+
 (use-package core-autoloads
   :load-path "core"
-  :init (loaddefs-generate (concat user-emacs-directory "core")
-                           (concat user-emacs-directory "core/core-autoloads.el")))
-
-(defun font-inject ()
-  (when (display-graphic-p)
-    (set-face-attribute 'default nil :family "SF Mono")
-    (set-face-attribute 'fixed-pitch nil :family "IBM 3270")
-    (set-face-attribute 'fixed-pitch-serif nil :family "IBM 3270")
-    (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif")))
-
-(add-to-list 'face-font-rescale-alist '("IBM 3270" . 1.24))
-
-(add-hook 'window-setup-hook
-          'font-inject)
-
-(add-hook 'server-after-make-frame-hook
-          'font-inject)
+  :init (loaddefs-generate
+         (concat user-emacs-directory "core")
+         (concat user-emacs-directory "core/core-autoloads.el")))
 
 (pixel-scroll-precision-mode t)
-(global-auto-revert-mode t)
-(delete-selection-mode t)
-(electric-pair-mode t)
 
-(select-frame-set-input-focus (selected-frame))
+(setq backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
-(setq-default indent-tabs-mode nil
-              bidi-display-reordering nil)
+(when (display-graphic-p)
+  (set-face-attribute 'default nil :family "SF Mono")
+  (set-face-attribute 'fixed-pitch nil :family "IBM 3270")
+  (set-face-attribute 'fixed-pitch-serif nil :family "IBM 3270")
+  (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif"))
 
-(setq dired-use-ls-dired nil
+(add-to-list 'face-font-rescale-alist
+             '("IBM 3270" . 1.24))
+
+(setq bidi-display-reordering nil
       bidi-inhibit-bpa t
       long-line-threshold 1000
       large-hscroll-threshold 1000
-      syntax-wholeline-max 1000
-      epg-pinentry-mode 'loopback
-      backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
-(defun refine-line-break ()
-  (when (derived-mode-p 'text-mode)
-    (visual-line-mode)))
-
-(add-hook 'after-change-major-mode-hook
-          'refine-line-break)
-
-(global-set-key (kbd "M-¥") (lambda ()
-                              (interactive)
-                              (insert-char ?\u005C)))
+      syntax-wholeline-max 1000)
 
 (setq modus-themes-common-palette-overrides
       '((fringe unspecified)
@@ -133,6 +109,88 @@
 
 (setq-default mode-line-format (mode-line-default))
 
+(select-frame-set-input-focus (selected-frame))
+
+(defun natural-line-break ()
+  (when (derived-mode-p 'text-mode)
+    (visual-line-mode)))
+
+(add-hook 'after-change-major-mode-hook
+          'natural-line-break)
+
+(global-set-key (kbd "M-¥") (lambda ()
+                              (interactive)
+                              (insert-char ?\u005C)))
+
+(setq-default indent-tabs-mode nil)
+
+(setq dired-use-ls-dired nil
+      epg-pinentry-mode 'loopback)
+
+(use-package treesit
+  :ensure nil)
+
+(setq grammar-unmask-alist '((c++ . cpp))
+      grammar-fallback-alist '((html-ts-mode . mhtml-mode))
+      grammar-language-alist '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+                               (c "https://github.com/tree-sitter/tree-sitter-c")
+                               (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+                               (css "https://github.com/tree-sitter/tree-sitter-css")
+                               (html "https://github.com/tree-sitter/tree-sitter-html")
+                               (json "https://github.com/tree-sitter/tree-sitter-json")
+                               (rust "https://github.com/tree-sitter/tree-sitter-rust")))
+
+(dolist (language grammar-language-alist)
+  (let* ((language (or (car (rassq (car language) grammar-unmask-alist))
+                       (car language)))
+         (derived (intern (concat (symbol-name language) "-ts-mode")))
+         (fallback (assq derived grammar-fallback-alist))
+         (default (or (cdr fallback)
+                      (intern (concat (symbol-name language) "-mode")))))
+    (and (not (and fallback (not (cdr fallback))))
+         (fboundp derived)
+         (if (treesit-ready-p language t)
+             (add-to-list 'major-mode-remap-alist
+                          `(,default . ,derived))
+           (when (fboundp default)
+             (add-to-list 'major-mode-remap-alist
+                          `(,derived . ,default)))))))
+
+(use-package which-key
+  :hook (after-init . which-key-mode)
+  :init (which-key-setup-minibuffer))
+
+(use-package vertico
+  :hook (after-init . vertico-mode))
+
+(setq tab-always-indent 'complete
+      read-extended-command-predicate 'command-completion-default-include-p)
+
+(use-package corfu
+  :hook (after-init . global-corfu-mode)
+  :init (setq corfu-auto t
+              corfu-cycle t
+              corfu-preselect 'prompt
+              corfu-quit-no-match 'separator)
+  :bind (:map corfu-map
+              ([tab] . corfu-next)
+              ([backtab] . corfu-previous)
+              ([return] . corfu-send)
+              ([escape] . corfu-quit)))
+
+(use-package marginalia
+  :hook (after-init . marginalia-mode))
+
+(use-package yasnippet
+  :hook (prog-mode . yas-minor-mode))
+
+(use-package eglot
+  :hook ((c-ts-mode c++-ts-mode tuareg-mode caml-mode) . eglot-ensure))
+
+(use-package eldoc-box
+  :hook ((eglot-managed-mode . eldoc-box-hover-mode)
+         (eldoc-mode . eldoc-box-hover-mode)))
+
 (defun eww-extract-xslt ()
   (save-excursion
     (goto-char (point-min))
@@ -152,13 +210,12 @@
   (when (or (string-match "\\.xml$" (eww-current-url))
             (save-excursion
               (goto-char (point-min))
-              (or (looking-at "<\\?xml")
-                  (re-search-forward "<\\?xml" nil t))))
+              (re-search-forward "<\\?xml" nil t)))
     (when-let* ((link (eww-extract-xslt))
                 (xslt (make-temp-file "eww" nil ".xsl"))
                 (xml (make-temp-file "eww" nil ".xml"))
                 (html (make-temp-file "eww" nil ".html"))
-                (command (format "xsltproc %S %S > %S" xslt xml html)))
+                (command (format "xsltproc '%s' '%s' > '%s'" xslt xml html)))
       (url-copy-file link xslt t)
       (append-to-file nil nil xml)
       (call-process-shell-command command nil nil)
@@ -167,132 +224,52 @@
 (add-hook 'eww-after-render-hook
           'eww-render-xslt)
 
-(setq shr-use-xwidgets-for-media t)
-
-(use-package treesit
-  :ensure nil)
-
-(setq treesit-mask-alist '((c++ . cpp))
-      treesit-fallback-alist '((html-ts-mode . mhtml-mode))
-      treesit-language-source-alist '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-                                      (c "https://github.com/tree-sitter/tree-sitter-c")
-                                      (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
-                                      (css "https://github.com/tree-sitter/tree-sitter-css")
-                                      (html "https://github.com/tree-sitter/tree-sitter-html")
-                                      (json "https://github.com/tree-sitter/tree-sitter-json")
-                                      (rust "https://github.com/tree-sitter/tree-sitter-rust")))
-
-(defun treesit-normalize-name (name)
-  (or (car (rassq name treesit-mask-alist))
-      name))
-
-(dolist (language-source treesit-language-source-alist)
-  (let* ((name (car language-source))
-         (name-ts-mode (intern (concat (symbol-name (treesit-normalize-name name)) "-ts-mode")))
-         (fallback-assoc (assq name-ts-mode treesit-fallback-alist))
-         (fallback-name (cdr fallback-assoc))
-         (name-mode (or fallback-name
-                        (intern (concat (symbol-name (treesit-normalize-name name)) "-mode"))))
-         (name-mode-bound-p (fboundp name-mode))
-         (skip-remap-p (and fallback-assoc
-                            (not (cdr fallback-assoc)))))
-    (and (not skip-remap-p)
-         (fboundp name-ts-mode)
-         (if (treesit-ready-p name t)
-             (add-to-list 'major-mode-remap-alist `(,name-mode . ,name-ts-mode))
-           (when name-mode-bound-p
-             (add-to-list 'major-mode-remap-alist `(,name-ts-mode . ,name-mode)))))))
-
-(use-package which-key
-  :hook (after-init . which-key-mode)
-  :init (which-key-setup-minibuffer))
-
-(use-package eldoc-box
-  :hook ((eglot-managed-mode . eldoc-box-hover-mode)
-         (eldoc-mode . eldoc-box-hover-mode)))
-
-(use-package eglot
-  :hook ((c-ts-mode c++-ts-mode tuareg-mode caml-mode) . eglot-ensure)
-  :config (with-eval-after-load 'eglot
-            (dolist (mode-server '((c-ts-mode . ("clangd" "--header-insertion=never"))
-                                   (c++-ts-mode . ("clangd" "--header-insertion=never"))))
-              (add-to-list 'eglot-server-programs mode-server))))
-
-(setq enable-recursive-minibuffers t
-      word-wrap-by-category t
-      read-extended-command-predicate 'command-completion-default-include-p)
-
-(use-package corfu
-  :hook (after-init . global-corfu-mode)
-  :init (setq corfu-auto t
-              corfu-cycle t
-              corfu-quit-no-match 'separator
-              corfu-preselect 'prompt)
-  :config (add-hook 'eshell-mode (lambda ()
-                                   (setq-local corfu-auto nil)))
-  :bind (:map corfu-map
-              ([tab] . corfu-next)
-              ([backtab] . corfu-previous)
-              ([return] . corfu-send)
-              ([escape] . corfu-quit)))
-
-(use-package yasnippet
-  :hook (prog-mode . yas-minor-mode))
-
-(use-package vertico
-  :hook (after-init . vertico-mode))
-
-(use-package marginalia
-  :hook (after-init . marginalia-mode)
-  :bind (:map minibuffer-local-map
-              ("M-A" . marginalia-cycle)))
-
 (setq user-mail-address "j18516785606@icloud.com"
-      user-full-name "RnE")
+      user-full-name "RnE"
+      mail-user-agent 'wl-user-agent)
+
+(define-mail-user-agent
+  'wl-user-agent
+  'wl-user-agent-compose
+  'wl-draft-send
+  'wl-draft-kill
+  'mail-send-hook)
 
 (use-package wanderlust
   :defer t
-  :init
-  (setq mail-user-agent 'wl-user-agent
-        elmo-passwd-storage-type 'auth-source
-        wl-smtp-connection-type 'starttls
-        wl-smtp-authenticate-type "plain"
-        wl-smtp-posting-user "j18516785606@icloud.com"
-        wl-smtp-posting-server "smtp.mail.me.com"
-        wl-smtp-posting-port 587
-        wl-local-domain "icloud.com"
-        wl-message-id-domain "smtp.mail.me.com"
-        wl-temporary-file-directory "~/.wl"
-        wl-summary-width nil
-        wl-summary-line-format "%n%T%P %W:%M/%D %h:%m %36(%t%[%c %f %]%) %s"
-        wl-thread-indent-level 2
-        wl-thread-have-younger-brother-str "+"
-        wl-thread-youngest-child-str "+"
-        wl-thread-vertical-str " "
-        wl-thread-horizontal-str "-"
-        wl-thread-space-str " "
-        wl-message-window-size '(2 . 5)
-        wl-message-ignored-field-list '(".")
-        wl-message-visible-field-list
-        '("^Subject:"
-          "^\\(To\\|Cc\\):"
-          "^\\(From\\|Reply-To\\):"
-          "^\\(Posted\\|Date\\):"
-          "^Organization:"
-          "^X-Face\\(-[0-9]+\\)?:")
-        wl-message-sort-field-list
-        '("^Subject"
-          "^\\(To\\|Cc\\)"
-          "^\\(From\\|Reply-To\\)"
-          "^\\(Posted\\|Date\\)"
-          "^Organization")
-        wl-highlight-x-face-function 'x-face-decode-message-header)
-  (define-mail-user-agent
-    'wl-user-agent
-    'wl-user-agent-compose
-    'wl-draft-send
-    'wl-draft-kill
-    'mail-send-hook))
+  :init (setq elmo-passwd-storage-type 'auth-source
+              wl-temporary-file-directory "~/.wl"
+              wl-smtp-connection-type 'starttls
+              wl-smtp-authenticate-type "plain"
+              wl-smtp-posting-user "j18516785606@icloud.com"
+              wl-smtp-posting-server "smtp.mail.me.com"
+              wl-smtp-posting-port 587
+              wl-local-domain "icloud.com"
+              wl-summary-width nil
+              wl-summary-line-format "%n%T%P %W:%M/%D %h:%m %36(%t%[%c %f %]%) %s"
+              wl-thread-indent-level 2
+              wl-thread-have-younger-brother-str "+"
+              wl-thread-youngest-child-str "+"
+              wl-thread-vertical-str " "
+              wl-thread-horizontal-str "-"
+              wl-thread-space-str " "
+              wl-message-id-domain "smtp.mail.me.com"
+              wl-message-window-size '(2 . 5)
+              wl-message-ignored-field-list '(".")
+              wl-message-visible-field-list
+              '("^Subject:"
+                "^\\(To\\|Cc\\):"
+                "^\\(From\\|Reply-To\\):"
+                "^\\(Posted\\|Date\\):"
+                "^Organization:"
+                "^X-Face\\(-[0-9]+\\)?:")
+              wl-message-sort-field-list
+              '("^Subject"
+                "^\\(To\\|Cc\\)"
+                "^\\(From\\|Reply-To\\)"
+                "^\\(Posted\\|Date\\)"
+                "^Organization")
+              wl-highlight-x-face-function 'x-face-decode-message-header))
 
 (define-advice wl-demo-insert-image
     (:before (_itype) wl-demo-normalize)
@@ -321,10 +298,10 @@
                   (with-current-buffer (window-buffer window)
                     (when (or (eq major-mode 'wl-message-mode)
                               (eq major-mode 'mime-view-mode))
-                      (when-let* ((xwidget (car (get-buffer-xwidgets (buffer-name))))
+                      (when-let* ((object (car (get-buffer-xwidgets (buffer-name))))
                                   (width (xwidget-window-inside-pixel-width window))
                                   (height (xwidget-wl-window-remnant window)))
-                        (xwidget-resize xwidget width height)))) 'none frame)))
+                        (xwidget-resize object width height)))) 'none frame)))
 
 (define-advice wl-summary-set-message-buffer-or-redisplay
     (:after (&rest _args) xwidget-wl-window-init)
@@ -390,8 +367,4 @@
 
 (use-package flyspell
   :with "aspell"
-  :hook (text-mode . (lambda ()
-                       (flyspell-mode 1)))
   :init (setq ispell-program-name "aspell"))
-
-;;; init.el ends here
