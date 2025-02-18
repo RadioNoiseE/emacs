@@ -53,6 +53,7 @@
          (concat user-emacs-directory "core/core-autoloads.el")))
 
 (pixel-scroll-precision-mode t)
+(electric-pair-mode t)
 
 (setq backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
@@ -140,16 +141,16 @@
                                (json "https://github.com/tree-sitter/tree-sitter-json")
                                (rust "https://github.com/tree-sitter/tree-sitter-rust")))
 
-(dolist (language grammar-language-alist)
-  (let* ((language (or (car (rassq (car language) grammar-unmask-alist))
-                       (car language)))
+(dolist (grammar grammar-language-alist)
+  (let* ((language (or (car (rassq (car grammar) grammar-unmask-alist))
+                       (car grammar)))
          (derived (intern (concat (symbol-name language) "-ts-mode")))
          (fallback (assq derived grammar-fallback-alist))
          (default (or (cdr fallback)
                       (intern (concat (symbol-name language) "-mode")))))
     (and (not (and fallback (not (cdr fallback))))
          (fboundp derived)
-         (if (treesit-ready-p language t)
+         (if (treesit-ready-p (car grammar) t)
              (add-to-list 'major-mode-remap-alist
                           `(,default . ,derived))
            (when (fboundp default)
