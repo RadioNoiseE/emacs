@@ -255,7 +255,6 @@
               wl-thread-horizontal-str "-"
               wl-thread-space-str " "
               wl-message-id-domain "smtp.mail.me.com"
-              wl-message-window-size '(2 . 5)
               wl-message-ignored-field-list '(".")
               wl-message-visible-field-list
               '("^Subject:"
