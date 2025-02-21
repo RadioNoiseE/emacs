@@ -327,8 +327,8 @@
 (use-package nxml-mode
   :ensure nil
   :defer t
-  :init (add-to-list 'rng-schema-locating-files
-                     (expand-file-name "schema/schemas.xml" user-emacs-directory)))
+  :config (add-to-list 'rng-schema-locating-files
+                       (expand-file-name "schema/schemas.xml" user-emacs-directory)))
 
 (use-package markdown-mode
   :defer t
@@ -374,13 +374,13 @@
 
 (use-package gptel
   :defer t
-  :init (let* ((host "models.inference.ai.azure.com")
-               (endpoint "/chat/completions?api-version=2024-05-01-preview")
-               (key (funcall (plist-get (car (auth-source-search :host host)) :secret))))
-          (setq gptel-model 'gpt-4o
-                gptel-backend (gptel-make-openai "azure"
-                                :host host
-                                :endpoint endpoint
-                                :key key
-                                :stream t
-                                :models '(gpt-4o)))))
+  :config (let* ((host "models.inference.ai.azure.com")
+                 (endpoint "/chat/completions?api-version=2024-05-01-preview")
+                 (key (funcall (plist-get (car (auth-source-search :host host)) :secret))))
+            (setq gptel-model 'gpt-4o
+                  gptel-backend (gptel-make-openai "azure"
+                                  :host host
+                                  :endpoint endpoint
+                                  :key key
+                                  :stream t
+                                  :models '(gpt-4o)))))
