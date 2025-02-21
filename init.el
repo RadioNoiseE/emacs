@@ -327,16 +327,19 @@
 (use-package nxml-mode
   :ensure nil
   :defer t
-  :config (add-to-list 'rng-schema-locating-files
-                       (expand-file-name "schema/schemas.xml" user-emacs-directory)))
+  :init (add-to-list 'rng-schema-locating-files
+                     (expand-file-name "schema/schemas.xml" user-emacs-directory)))
 
 (use-package markdown-mode
-  :defer t)
+  :defer t
+  :init (setq markdown-enable-math t
+              markdown-hide-urls t
+              markdown-fontify-code-blocks-natively t))
 
 (use-package auctex
   :with "luatex"
   :defer t
-  :config
+  :init
   (setq-default TeX-engine 'luatex)
   (setq TeX-check-TeX nil
         TeX-parse-self t
@@ -371,13 +374,13 @@
 
 (use-package gptel
   :defer t
-  :config (let* ((host "models.inference.ai.azure.com")
-                 (endpoint "/chat/completions?api-version=2024-05-01-preview")
-                 (key (funcall (plist-get (car (auth-source-search :host host)) :secret))))
-            (setq gptel-model 'gpt-4o
-                  gptel-backend (gptel-make-openai "azure"
-                                  :host host
-                                  :endpoint endpoint
-                                  :key key
-                                  :stream t
-                                  :models '(gpt-4o)))))
+  :init (let* ((host "models.inference.ai.azure.com")
+               (endpoint "/chat/completions?api-version=2024-05-01-preview")
+               (key (funcall (plist-get (car (auth-source-search :host host)) :secret))))
+          (setq gptel-model 'gpt-4o
+                gptel-backend (gptel-make-openai "azure"
+                                :host host
+                                :endpoint endpoint
+                                :key key
+                                :stream t
+                                :models '(gpt-4o)))))
