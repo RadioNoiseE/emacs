@@ -52,9 +52,6 @@
          (concat user-emacs-directory "core")
          (concat user-emacs-directory "core/core-autoloads.el")))
 
-(pixel-scroll-precision-mode t)
-(electric-pair-mode t)
-
 (setq backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
@@ -73,6 +70,13 @@
       large-hscroll-threshold 1000
       syntax-wholeline-max 1000)
 
+(pixel-scroll-precision-mode t)
+
+(setq pixel-scroll-precision-use-momentum t
+      pixel-scroll-precision-interpolate-page t)
+
+(electric-pair-mode t)
+
 (setq modus-themes-common-palette-overrides
       '((fringe unspecified)
         (border-mode-line-active cyan-faint)))
@@ -82,31 +86,22 @@
 
 (setq mode-line-right-align-edge 'right-margin)
 
-(defun mode-line-compose (indicator name preamble postamble)
+(defun mode-line-compose (indicator buffer preamble postamble)
   (list `(:propertize ,indicator face (:foreground "#ffffff" :background "#004f5f"))
-        `(:propertize ,name face (:foreground "#193668"))
+        `(:propertize ,buffer face (:foreground "#193668"))
         'mode-line-format-right-align
         `(:propertize ,preamble face (:foreground "#193668"))
         '(:propertize "<<" face (:foreground "#595959"))
         `(:propertize ,postamble face ((:foreground "#004f5f") bold))))
 
-(defun mode-line-status ()
-  (cond ((and buffer-file-name (buffer-modified-p)) "RW")
-        (buffer-read-only "RO")
-        (t "WR")))
-
-(defun mode-line-branch ()
-  (if vc-mode
-      (let ((backend (vc-backend buffer-file-name)))
-        (concat ", #" (substring-no-properties
-                       vc-mode (+ (if (eq backend 'Hg) 2 3) 2))))))
-
 (defun mode-line-default ()
-  (let ((status '(" " (:eval (mode-line-status)) " "))
-        (file '(" %b "))
-        (mode '(" " mode-name (:eval (mode-line-branch)) " "))
-        (position '((-3 "%p") " %l:%c ")))
-    (mode-line-compose status file position mode)))
+  (let ((indicator '(" " (:eval (cond ((and buffer-file-name (buffer-modified-p)) "RW")
+                                      (buffer-read-only "RO")
+                                      (t "WR"))) " "))
+        (buffer '(" %b "))
+        (preamble '((-3 "%p") " %l:%c "))
+        (postamble '(" %[" mode-name "%] ")))
+    (mode-line-compose indicator buffer preamble postamble)))
 
 (setq-default mode-line-format (mode-line-default))
 
