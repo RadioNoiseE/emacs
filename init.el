@@ -266,8 +266,7 @@
                 "^Organization")
               wl-highlight-x-face-function 'x-face-decode-message-header))
 
-(define-advice wl-demo-insert-image
-    (:before (_itype) wl-demo-normalize)
+(with-eval-after-load 'wl-demo
   (set-face-background 'wl-highlight-demo-face nil))
 
 (eval-when-compile
@@ -330,6 +329,9 @@
   :init (setq markdown-enable-math t
               markdown-hide-urls t
               markdown-fontify-code-blocks-natively t))
+
+(with-eval-after-load 'markdown-mode
+  (set-face-underline 'markdown-line-break-face nil))
 
 (use-package auctex
   :with "luatex"
