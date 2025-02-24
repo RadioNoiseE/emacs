@@ -365,6 +365,9 @@
   :with "git"
   :defer t)
 
+(use-package diff-hl
+  :hook (after-init . global-diff-hl-mode))
+
 (use-package flyspell
   :with "aspell"
   :init (setq ispell-program-name "aspell"))
