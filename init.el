@@ -107,6 +107,25 @@
 
 (select-frame-set-input-focus (selected-frame))
 
+(defun adjust-frame-opacity (frame delta)
+  (let* ((alpha (or (frame-parameter frame 'alpha) 100))
+         (alpha (if (listp alpha) (car alpha) alpha))
+         (alpha (+ alpha delta)))
+    (when (and (<= frame-alpha-lower-limit alpha)
+               (>= 100 alpha))
+      (set-frame-parameter frame 'alpha alpha))))
+
+(defun frame-perspective ()
+  (interactive)
+  (dolist (frame (frame-list))
+    (adjust-frame-opacity frame -40))
+  (read-event)
+  (when last-input-event
+    (dolist (frame (frame-list))
+      (adjust-frame-opacity frame 40))))
+
+(global-set-key (kbd "M-p") 'frame-perspective)
+
 (defun natural-line-break ()
   (when (derived-mode-p 'text-mode)
     (visual-line-mode)))
