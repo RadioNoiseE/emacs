@@ -1,8 +1,9 @@
 ## Introduction
 
-An Emacs 30 compiled with treesit support is required. The latest Emacs from IGC/MPS branch is recommended.
+An Emacs 30 compiled with Treesit and XWidget support is assumed. The latest Emacs from IGC/MPS branch is recommended.
+If you are on UNIX platform, the script `ebuild.sh` can be used to build Emacs with IGC/MPS features.
 
-If you are on UNIX platform, there is a script `ebuild.sh` which you can use to make Emacs.
+This is personal Emacs configuration, without higher-level abstraction.
 
 ## Install
 
@@ -19,7 +20,8 @@ To install all language grammar for treesitter, evaluate:
 ## Misc
 
 It comes with additional Plan9 mk, TECO and RelaxNG Compact support by LdBeth, as well as WEB support by Don Knuth and major mode for J.
-
 The support for OCaML, Swift, TeX, CommonLisp, Coq won't be activated unless you have their compiler installed.
 
-Some XML related stuff are under `schema` which you can safely remove.
+EWW is patched in a way so that it can render XML with XSL stylesheets. WanderLust is modified so that it renders HTML mail using XWidget.
+
+Some XML related stuff are under `schema` which you can safely remove with the nXML package.
