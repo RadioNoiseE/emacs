@@ -394,7 +394,7 @@
 (use-package gptel
   :defer t
   :config (let* ((host "models.inference.ai.azure.com")
-                 (endpoint "/chat/completions?api-version=2024-05-01-preview")
+                 (endpoint "/chat/completions")
                  (key (funcall (plist-get (car (auth-source-search :host host)) :secret))))
             (setq gptel-model 'gpt-4o
                   gptel-backend (gptel-make-openai "azure"
