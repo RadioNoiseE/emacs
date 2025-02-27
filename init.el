@@ -124,7 +124,7 @@
     (dolist (frame (frame-list))
       (adjust-frame-opacity frame 40))))
 
-(global-set-key (kbd "M-p") 'frame-perspective)
+(keymap-global-set "M-RET" 'frame-perspective)
 
 (defun natural-line-break ()
   (when (derived-mode-p 'text-mode)
@@ -133,9 +133,7 @@
 (add-hook 'after-change-major-mode-hook
           'natural-line-break)
 
-(global-set-key (kbd "M-¥") (lambda ()
-                              (interactive)
-                              (insert-char ?\u005C)))
+(keymap-global-set "¥" "\\")
 
 (setq-default indent-tabs-mode nil)
 
