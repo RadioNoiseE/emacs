@@ -133,7 +133,7 @@
 (add-hook 'after-change-major-mode-hook
           'natural-line-break)
 
-(keymap-global-set "¥" "\\")
+(keymap-global-set "M-¥" "\\")
 
 (setq-default indent-tabs-mode nil)
 
