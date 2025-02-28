@@ -126,12 +126,14 @@
 
 (keymap-global-set "M-RET" 'frame-perspective)
 
-(defun natural-line-break ()
-  (when (derived-mode-p 'text-mode)
-    (visual-line-mode)))
+(defun text-mode-refine ()
+  (setq-local corfu-auto nil
+              completion-preview-minimum-symbol-length 2)
+  (completion-preview-mode)
+  (visual-line-mode))
 
-(add-hook 'after-change-major-mode-hook
-          'natural-line-break)
+(add-hook 'text-mode-hook
+          'text-mode-refine)
 
 (keymap-global-set "M-¥" "\\")
 
