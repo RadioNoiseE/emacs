@@ -126,6 +126,8 @@
 
 (keymap-global-set "M-RET" 'frame-perspective)
 
+(setq word-wrap-by-category t)
+
 (defun text-mode-refine ()
   (setq-local corfu-auto nil
               completion-preview-minimum-symbol-length 2)
