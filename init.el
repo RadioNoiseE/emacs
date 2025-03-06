@@ -318,12 +318,25 @@
                                   (height (xwidget-wl-window-remnant window)))
                         (xwidget-resize object width height)))) 'none frame)))
 
-(define-advice wl-summary-set-message-buffer-or-redisplay
-    (:after (&rest _args) xwidget-wl-window-init)
-  (xwidget-wl-window-adjust (selected-frame)))
+(defun xwidget-wl-window-dispose ()
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (unless (get-buffer-window buffer)
+      (with-current-buffer buffer
+        (when (or (eq major-mode 'wl-message-mode)
+                  (eq major-mode 'mime-view-mode))
+          (when-let* ((object (car (get-buffer-xwidgets (buffer-name)))))
+            (kill-xwidget object)
+            (kill-buffer (current-buffer))
+            (xwidget-delete-zombies)))))))
 
 (add-to-list 'window-size-change-functions
              'xwidget-wl-window-adjust)
+
+(define-advice wl-summary-set-message-buffer-or-redisplay
+    (:after (&rest _args) xwidget-wl-window-init)
+  (xwidget-wl-window-adjust (selected-frame))
+  (xwidget-wl-window-dispose))
 
 (define-advice mime-shr-preview-text/html
     (:override (entity _situation) xwidget-wl-render-html)
