@@ -306,9 +306,9 @@
       (while (< (point) (point-max))
         (setq remnant (+ remnant (line-pixel-height)))
         (forward-line 1)))
-    (- total (+ remnant 6))))
+    (- total (+ remnant 4))))
 
-(defun xwidget-wl-window-adjust (frame)
+(defun xwidget-wl-window-realize (&optional frame)
   (walk-windows (lambda (window)
                   (with-current-buffer (window-buffer window)
                     (when (or (eq major-mode 'wl-message-mode)
@@ -319,7 +319,6 @@
                         (xwidget-resize object width height)))) 'none frame)))
 
 (defun xwidget-wl-window-dispose ()
-  (interactive)
   (dolist (buffer (buffer-list))
     (unless (get-buffer-window buffer)
       (with-current-buffer buffer
@@ -331,11 +330,11 @@
             (xwidget-delete-zombies)))))))
 
 (add-to-list 'window-size-change-functions
-             'xwidget-wl-window-adjust)
+             'xwidget-wl-window-realize)
 
 (define-advice wl-summary-set-message-buffer-or-redisplay
     (:after (&rest _args) xwidget-wl-window-init)
-  (xwidget-wl-window-adjust (selected-frame))
+  (xwidget-wl-window-realize)
   (xwidget-wl-window-dispose))
 
 (define-advice mime-shr-preview-text/html
@@ -400,7 +399,8 @@
   :defer t)
 
 (use-package diff-hl
-  :hook (after-init . global-diff-hl-mode))
+  :with "git"
+  :defer t)
 
 (use-package flyspell
   :with "aspell"
