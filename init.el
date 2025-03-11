@@ -46,14 +46,31 @@
     (if (or (not executable) (executable-find executable))
         (apply orig package body))))
 
+(setq backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+
 (use-package core-autoloads
   :load-path "core"
   :init (loaddefs-generate
          (concat user-emacs-directory "core")
          (concat user-emacs-directory "core/core-autoloads.el")))
 
-(setq backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+(setq hanamin-fontset-alist '(("Hanazono Mincho A" . ((#x0000 . #xD7FF)
+                                                      (#xE000 . #xFFFD)
+                                                      (#x10000 . #x1FFFD)))
+                              ("Hanazono Mincho B" . ((#x20000 . #x2A6D6)))
+                              ("Hanazono Mincho C" . ((#x2A700 . #x2FFFD)))))
+
+(dolist (entry hanamin-fontset-alist)
+  (dolist (range (cdr entry))
+    (set-fontset-font nil range (font-spec :family (car entry)))))
+
+(dolist (font hanamin-fontset-alist)
+  (add-to-list 'face-font-rescale-alist
+               `(,(car font) . 1.28)))
+
+(dolist (charset '(latin greek cyrillic))
+  (set-fontset-font nil charset (font-spec :family "SF Mono" :weight 'regular)))
 
 (when (display-graphic-p)
   (set-face-attribute 'default nil :family "SF Mono")
