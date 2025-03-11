@@ -55,6 +55,15 @@
          (concat user-emacs-directory "core")
          (concat user-emacs-directory "core/core-autoloads.el")))
 
+(when (display-graphic-p)
+  (set-face-attribute 'default nil :family "SF Mono")
+  (set-face-attribute 'fixed-pitch nil :family "IBM 3270")
+  (set-face-attribute 'fixed-pitch-serif nil :family "IBM 3270")
+  (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif"))
+
+(add-to-list 'face-font-rescale-alist
+             '("IBM 3270" . 1.24))
+
 (setq hanamin-fontset-alist '(("Hanazono Mincho A" . ((#x0000 . #xD7FF)
                                                       (#xE000 . #xFFFD)
                                                       (#x10000 . #x1FFFD)))
@@ -65,21 +74,8 @@
   (dolist (range (cdr entry))
     (set-fontset-font nil range (font-spec :family (car entry)))))
 
-(dolist (font hanamin-fontset-alist)
-  (add-to-list 'face-font-rescale-alist
-               `(,(car font) . 1.28)))
-
 (dolist (charset '(latin greek cyrillic))
   (set-fontset-font nil charset (font-spec :family "SF Mono" :weight 'regular)))
-
-(when (display-graphic-p)
-  (set-face-attribute 'default nil :family "SF Mono")
-  (set-face-attribute 'fixed-pitch nil :family "IBM 3270")
-  (set-face-attribute 'fixed-pitch-serif nil :family "IBM 3270")
-  (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif"))
-
-(add-to-list 'face-font-rescale-alist
-             '("IBM 3270" . 1.24))
 
 (setq bidi-display-reordering nil
       bidi-inhibit-bpa t
