@@ -55,33 +55,30 @@
          (concat user-emacs-directory "core")
          (concat user-emacs-directory "core/core-autoloads.el")))
 
+(setq cjk-fontset-map-alist '(("Hanazono Mincho A" . ((#x0000 . #xD7FF)
+                                                      (#xE000 . #xFFFD)
+                                                      (#x10000 . #x1FFFD)))
+                              ("Hanazono Mincho B" . ((#x20000 . #x2A6D6)))
+                              ("Hanazono Mincho C" . ((#x2A700 . #x2FFFD)))))
+
+(dolist (entry cjk-fontset-map-alist)
+  (dolist (range (cdr entry))
+    (set-fontset-font t range (font-spec :family (car entry)))))
+
 (when (display-graphic-p)
   (set-face-attribute 'default nil :family "SF Mono")
   (set-face-attribute 'fixed-pitch nil :family "IBM 3270")
   (set-face-attribute 'fixed-pitch-serif nil :family "IBM 3270")
   (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif"))
 
-(add-to-list 'face-font-rescale-alist
-             '("IBM 3270" . 1.24))
-
-(setq hanamin-fontset-alist '(("Hanazono Mincho A" . ((#x0000 . #xD7FF)
-                                                      (#xE000 . #xFFFD)
-                                                      (#x10000 . #x1FFFD)))
-                              ("Hanazono Mincho B" . ((#x20000 . #x2A6D6)))
-                              ("Hanazono Mincho C" . ((#x2A700 . #x2FFFD)))))
-
-(dolist (entry hanamin-fontset-alist)
-  (dolist (range (cdr entry))
-    (set-fontset-font nil range (font-spec :family (car entry)))))
-
-(dolist (charset '(latin greek cyrillic))
-  (set-fontset-font nil charset (font-spec :family "SF Mono" :weight 'regular)))
-
 (setq bidi-display-reordering nil
       bidi-inhibit-bpa t
       long-line-threshold 1000
       large-hscroll-threshold 1000
       syntax-wholeline-max 1000)
+
+(keymap-global-set "C-<wheel-up>" 'ignore)
+(keymap-global-set "C-<wheel-down>" 'ignore)
 
 (pixel-scroll-precision-mode t)
 
