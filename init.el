@@ -61,6 +61,9 @@
   (set-face-attribute 'fixed-pitch-serif nil :family "IBM 3270")
   (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif"))
 
+(add-to-list 'face-font-rescale-alist
+             '("IBM 3270" . 1.24))
+
 (setq bidi-display-reordering nil
       bidi-inhibit-bpa t
       long-line-threshold 1000
@@ -77,22 +80,27 @@
 
 (electric-pair-mode t)
 
-(setq modus-themes-common-palette-overrides
-      '((fringe unspecified)
-        (border-mode-line-active cyan-faint)))
+;; (setq modus-themes-common-palette-overrides
+;;       '((fringe unspecified)
+;;         (border-mode-line-active cyan-faint)))
 
-(mapc 'disable-theme custom-enabled-themes)
-(load-theme 'modus-operandi-tritanopia)
+;; (mapc 'disable-theme custom-enabled-themes)
+;; (load-theme 'modus-operandi-tritanopia)
+
+(use-package spacemacs-theme
+  :config (load-theme 'spacemacs-light t))
 
 (setq mode-line-right-align-edge 'right-margin)
 
 (defun mode-line-compose (indicator buffer preamble postamble)
-  (list `(:propertize ,indicator face (:foreground "#ffffff" :background "#004f5f"))
-        `(:propertize ,buffer face (:foreground "#193668"))
+  (list `(:propertize ,indicator face (:foreground "#ffffff" :background "#b3b9be"))
+        `(:propertize ,buffer face (:foreground "#3a81c3"))
+        '(:propertize " " display (raise 0.12))
+        '(:propertize " " display (raise -0.12))
         'mode-line-format-right-align
-        `(:propertize ,preamble face (:foreground "#193668"))
-        '(:propertize "<<" face (:foreground "#595959"))
-        `(:propertize ,postamble face ((:foreground "#004f5f") bold))))
+        `(:propertize ,preamble face (:foreground "#6c3163"))
+        '(:propertize "<<" face (:foreground "#dc752f"))
+        `(:propertize ,postamble face ((:foreground "#3a81c3") bold))))
 
 (defun mode-line-default ()
   (let ((indicator '(" " (:eval (cond ((and buffer-file-name (buffer-modified-p)) "RW")
