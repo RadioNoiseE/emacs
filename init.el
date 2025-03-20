@@ -307,7 +307,8 @@
 (defun xwidget-wl-window-remnant (window)
   (when-let* ((object (next-single-property-change (point-min) 'display))
               (total (xwidget-window-inside-pixel-height window))
-              (remnant 0))
+              (fringes (window-fringes))
+              (remnant 2))
     (save-excursion
       (goto-char (point-min))
       (while (< (point) object)
@@ -317,7 +318,8 @@
       (while (< (point) (point-max))
         (setq remnant (+ remnant (line-pixel-height)))
         (forward-line 1)))
-    (- total (+ remnant 4))))
+    (- total (+ remnant (/ (+ (nth 0 fringes)
+                              (nth 1 fringes)) 2)))))
 
 (defun xwidget-wl-window-realize (&optional frame)
   (walk-windows (lambda (window)
