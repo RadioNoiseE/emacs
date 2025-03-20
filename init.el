@@ -55,6 +55,16 @@
          (concat user-emacs-directory "core")
          (concat user-emacs-directory "core/core-autoloads.el")))
 
+(setq cjk-fontset-map-alist '(("Hanazono Mincho A" . ((#x0000 . #xD7FF)
+                                                      (#xE000 . #xFFFD)
+                                                      (#x10000 . #x1FFFD)))
+                              ("Hanazono Mincho B" . ((#x20000 . #x2A6D6)))
+                              ("Hanazono Mincho C" . ((#x2A700 . #x2FFFD)))))
+
+(dolist (entry cjk-fontset-map-alist)
+  (dolist (range (cdr entry))
+    (set-fontset-font t range (font-spec :family (car entry)))))
+
 (when (display-graphic-p)
   (set-face-attribute 'default nil :family "SF Mono")
   (set-face-attribute 'fixed-pitch nil :family "IBM 3270")
@@ -79,13 +89,6 @@
       pixel-scroll-precision-interpolate-page t)
 
 (electric-pair-mode t)
-
-;; (setq modus-themes-common-palette-overrides
-;;       '((fringe unspecified)
-;;         (border-mode-line-active cyan-faint)))
-
-;; (mapc 'disable-theme custom-enabled-themes)
-;; (load-theme 'modus-operandi-tritanopia)
 
 (use-package spacemacs-theme
   :config (load-theme 'spacemacs-light t))
