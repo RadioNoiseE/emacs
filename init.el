@@ -3,6 +3,13 @@
 ;; This file bootstraps the configuration.
 ;; Copyright (C) 2024, 2025 RadioNoiseE
 
+(defvar dumped-load-path)
+
+(when (boundp 'dumped-load-path)
+  (setq load-path dumped-load-path)
+  (global-font-lock-mode t)
+  (transient-mark-mode t))
+
 (setq-local file-name-handler-alist nil)
 
 (setq inhibit-startup-message t
