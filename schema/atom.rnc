@@ -39,7 +39,7 @@ atomPersonConstruct =
 
 # Date Construct
 
-atomDateConstruct=
+atomDateConstruct =
   atomCommonAttributes,
   xsd:dateTime
 
