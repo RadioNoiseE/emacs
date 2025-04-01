@@ -8,10 +8,9 @@
 (setq inhibit-startup-message t
       custom-file (make-temp-file "custom" nil ".el"))
 
-(mapc (lambda (folder)
-        (add-to-list 'load-path
-                     (expand-file-name folder user-emacs-directory)))
-      '("core"))
+(dolist (site '("core"))
+  (add-to-list 'load-path
+               (expand-file-name site user-emacs-directory)))
 
 (defun env-flush ()
   (let* ((shell (or (getenv "SHELL") "/bin/sh"))
