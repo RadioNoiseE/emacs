@@ -6,5 +6,8 @@ dump:VQ:
  $EAPP/Emacs --dump "${EDMP}/Emacs.pdmp.bak" --batch  --load "${ESTE}/dump.el"
  mv $ESTE/Emacs.pdmp $EDMP/Emacs.pdmp
 
-gurd:VQ:
+init:VQ:
  cp $EDMP/Emacs.pdmp $EDMP/Emacs.pdmp.bak
+
+orig:VQ:
+ $EAPP/Emacs --dump "${EDMP}/Emacs.pdmp.bak"

@@ -97,6 +97,7 @@
 (electric-pair-mode t)
 
 (use-package spacemacs-theme
+  :init (setq spacemacs-theme-comment-bg nil)
   :config (load-theme 'spacemacs-light t))
 
 (setq mode-line-right-align-edge 'right-margin)
