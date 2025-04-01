@@ -11,7 +11,7 @@
   (load (concat user-emacs-directory site)))
 
 (require 'spacemacs-theme)
-(load-theme 'spacemacs-light t)
+(load-theme 'spacemacs-light t t)
 
 (dolist (package '(package use-package treesit which-key
                            vertico corfu marginalia
