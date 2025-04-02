@@ -12,7 +12,7 @@
 
 (setq-local file-name-handler-alist nil)
 
-(setq inhibit-startup-message t
+(setq inhibit-startup-screen t
       custom-file (make-temp-file "custom" nil ".el"))
 
 (dolist (site '("core"))
