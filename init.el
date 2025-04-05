@@ -6,13 +6,12 @@
 (defvar dumped-load-path)
 
 (when (boundp 'dumped-load-path)
-  (setq load-path dumped-load-path)
-  (global-font-lock-mode t)
-  (transient-mark-mode t))
+  (setq load-path dumped-load-path))
 
 (setq-local file-name-handler-alist nil)
 
-(setq inhibit-startup-screen t
+(setq use-short-answers t
+      inhibit-startup-screen t
       custom-file (make-temp-file "custom" nil ".el"))
 
 (dolist (site '("core"))
@@ -31,6 +30,8 @@
           (when (string= variable "PATH")
             (setenv variable value)
             (setq exec-path (split-string value path-separator))))))))
+
+(setq package-quickstart t)
 
 (with-eval-after-load 'package
   (add-to-list 'package-archives
@@ -89,12 +90,12 @@
 (keymap-global-set "C-<wheel-up>" 'ignore)
 (keymap-global-set "C-<wheel-down>" 'ignore)
 
+(electric-pair-mode t)
+(delete-selection-mode t)
 (pixel-scroll-precision-mode t)
 
 (setq pixel-scroll-precision-use-momentum t
       pixel-scroll-precision-interpolate-page t)
-
-(electric-pair-mode t)
 
 (use-package spacemacs-theme
   :init (setq spacemacs-theme-comment-bg nil)

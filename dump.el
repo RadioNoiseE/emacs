@@ -7,18 +7,16 @@
 
 (defconst dumped-load-path load-path)
 
-(dolist (site '("early-init" "init"))
-  (load (concat user-emacs-directory site)))
+(defun dumped-init ()
+  (global-font-lock-mode t)
+  (transient-mark-mode t))
+
+(add-hook 'emacs-startup-hook 'dumped-init)
 
 (require 'spacemacs-theme)
 (load-theme 'spacemacs-light t t)
 
-(dolist (package '(package use-package treesit which-key
-                           vertico corfu marginalia
-                           yasnippet eldoc-box eww
-                           wanderlust xwidget nxml-mode
-                           markdown-mode auctex magit
-                           diff-hl flyspell))
-  (require package))
+(dolist (site '("early-init" "init"))
+  (load (concat user-emacs-directory site)))
 
 (dump-emacs-portable "Emacs.pdmp")
