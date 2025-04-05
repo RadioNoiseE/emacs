@@ -147,6 +147,25 @@
 
 (setq word-wrap-by-category t)
 
+(defun expand-region ()
+  (interactive)
+  (when (and (boundp 'treesit-primary-parser)
+             treesit-primary-parser)
+    (let* ((node (if (use-region-p)
+                     (treesit-node-on (region-beginning) (region-end))
+                   (treesit-node-at (point))))
+           (start (treesit-node-start node))
+           (end (treesit-node-end node)))
+      (when (and (= (region-beginning) start)
+                 (= (region-end) end))
+        (when-let* ((node (treesit-node-parent node)))
+          (setq start (treesit-node-start node)
+                end (treesit-node-end node))))
+      (goto-char start)
+      (set-mark end))))
+
+(keymap-global-set "M-+" 'expand-region)
+
 (defun text-mode-refine ()
   (setq-local corfu-auto nil
               completion-preview-minimum-symbol-length 2)
@@ -173,7 +192,9 @@
                                       (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
                                       (css "https://github.com/tree-sitter/tree-sitter-css")
                                       (html "https://github.com/tree-sitter/tree-sitter-html")
+                                      (java "https://github.com/tree-sitter/tree-sitter-java")
                                       (json "https://github.com/tree-sitter/tree-sitter-json")
+                                      (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
                                       (rust "https://github.com/tree-sitter/tree-sitter-rust")))
 
 (dolist (grammar treesit-language-source-alist)
