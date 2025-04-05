@@ -6,7 +6,7 @@ iCloud{
 }
 
 WFLA{
-|%Inbox:"jinghuang_2026@thestudentbuddy.org"/clear@mail.thestudentbuddy.org:993!|+wfla  "Inbox"
+|%Inbox:"jinghuang_2026@thestudentbuddy.org"/clear@mail.thestudentbuddy.org:993!|:+wfla  "Inbox"
 }
 
 Article{
