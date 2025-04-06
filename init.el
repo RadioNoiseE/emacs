@@ -213,10 +213,6 @@
              (add-to-list 'major-mode-remap-alist
                           `(,derived . ,default)))))))
 
-(use-package which-key
-  :hook (after-init . which-key-mode)
-  :init (which-key-setup-minibuffer))
-
 (use-package vertico
   :hook (after-init . vertico-mode))
 
