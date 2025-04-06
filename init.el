@@ -213,6 +213,11 @@
              (add-to-list 'major-mode-remap-alist
                           `(,derived . ,default)))))))
 
+(use-package avy
+  :bind (("C-: c" . avy-goto-char)
+         ("C-: x" . avy-goto-char-timer)
+         ("C-: l" . avy-goto-line)))
+
 (use-package vertico
   :hook (after-init . vertico-mode))
 
