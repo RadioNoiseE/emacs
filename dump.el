@@ -1,4 +1,4 @@
-;;; init.el -*- lexical-binding: t -*-
+;;; dump.el -*- lexical-binding: t -*-
 
 ;; This file dumps the current installation.
 ;; Copyright (C) 2025 RadioNoiseE
@@ -8,19 +8,18 @@
 (defconst dumped-load-path load-path)
 (defconst dumped-load-mask '(gptel))
 
-(dolist (site '("early-init.el" "init.el"))
-  (with-temp-buffer
-    (insert-file-contents (concat user-emacs-directory site))
-    (goto-char (point-min))
-    (condition-case error
-        (while-let ((form (read (current-buffer))))
-          (pcase form
-            (`(use-package ,package . ,rest)
-             (unless (memq package dumped-load-mask)
-               (message "(require %s%s)" "\N{APOSTROPHE}" package)
-               (require package nil t)))
-            (_ (eval form))))
-      (end-of-file nil))))
+(with-temp-buffer
+  (insert-file-contents (concat user-emacs-directory "init.el"))
+  (goto-char (point-min))
+  (condition-case error
+      (while-let ((form (read (current-buffer))))
+        (pcase form
+          (`(use-package ,package . ,rest)
+           (unless (memq package dumped-load-mask)
+             (require package nil t)))))
+    (end-of-file nil)))
+
+(load-theme 'spacemacs-light t t)
 
 (defun dumped-init ()
   (global-font-lock-mode t)
