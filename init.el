@@ -445,6 +445,31 @@
   :with "aspell"
   :init (setq ispell-program-name "aspell"))
 
+(use-package flymake
+  :defer t
+  :init (define-fringe-bitmap 'flymake-fringe-indicator
+          (vector #b00000000
+                  #b00000000
+                  #b00000000
+                  #b00000000
+                  #b00000000
+                  #b00000000
+                  #b00011100
+                  #b00111110
+                  #b00111110
+                  #b00111110
+                  #b00011100
+                  #b00000000
+                  #b00000000
+                  #b00000000
+                  #b00000000
+                  #b00000000
+                  #b00000000))
+  :config (setq flymake-indicator-type 'fringes
+                flymake-note-bitmap '(flymake-fringe-indicator compilation-info)
+                flymake-warning-bitmap '(flymake-fringe-indicator compilation-warning)
+                flymake-error-bitmap '(flymake-fringe-indicator compilation-error)))
+
 (use-package gptel
   :defer t
   :config (let* ((host "models.inference.ai.azure.com")
