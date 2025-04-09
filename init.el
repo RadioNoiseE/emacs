@@ -241,11 +241,8 @@
   :hook (prog-mode . yas-minor-mode))
 
 (use-package eglot
-  :hook ((c-ts-mode c++-ts-mode tuareg-mode caml-mode) . eglot-ensure))
-
-(use-package eldoc-box
-  :hook ((eglot-managed-mode . eldoc-box-hover-mode)
-         (eldoc-mode . eldoc-box-hover-mode)))
+  :hook ((c-ts-mode c++-ts-mode tuareg-mode caml-mode) . eglot-ensure)
+  :init (setq eglot-code-action-indications '(eldoc-hint)))
 
 (defun eww-extract-xslt ()
   (save-excursion
