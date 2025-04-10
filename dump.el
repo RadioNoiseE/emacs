@@ -19,7 +19,7 @@
              (require package nil t)))))
     (end-of-file nil)))
 
-(load-theme 'spacemacs-light t t)
+(load-theme 'railgun-light t t)
 
 (defun dumped-init ()
   (global-font-lock-mode t)

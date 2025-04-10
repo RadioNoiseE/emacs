@@ -12,6 +12,7 @@
 
 (setq use-short-answers t
       inhibit-startup-screen t
+      max-mini-window-height 1
       custom-file (make-temp-file "custom" nil ".el"))
 
 (dolist (site '("core"))
@@ -41,7 +42,8 @@
 (with-eval-after-load 'use-package
   (env-flush))
 
-(setq use-package-always-ensure t)
+(setq use-package-always-ensure t
+      use-package-vc-prefer-newest t)
 
 (define-advice use-package
     (:around (orig package &rest body) use-with-binary)
@@ -73,11 +75,10 @@
 (when (display-graphic-p)
   (set-face-attribute 'default nil :family "SF Mono")
   (set-face-attribute 'fixed-pitch nil :family "IBM 3270")
-  (set-face-attribute 'fixed-pitch-serif nil :family "IBM 3270")
   (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif"))
 
 (add-to-list 'face-font-rescale-alist
-             '("IBM 3270" . 1.24))
+             '("IBM 3270" . 1.17))
 
 (setq bidi-display-reordering nil
       bidi-inhibit-bpa t
@@ -95,9 +96,9 @@
 (setq pixel-scroll-precision-use-momentum t
       pixel-scroll-precision-interpolate-page t)
 
-(use-package spacemacs-theme
-  :init (setq spacemacs-theme-comment-bg nil)
-  :config (load-theme 'spacemacs-light t))
+(use-package railgun-themes
+  :vc (:url "https://github.com/radionoisee/railgun-themes.git")
+  :config (load-theme 'railgun-light t))
 
 (setq mode-line-right-align-edge 'right-margin)
 
@@ -244,6 +245,15 @@
   :hook ((c-ts-mode c++-ts-mode tuareg-mode caml-mode) . eglot-ensure)
   :init (setq eglot-code-action-indications '(eldoc-hint)))
 
+(use-package eldoc
+  :defer t
+  :init (setq eldoc-echo-area-display-truncation-message nil
+              eldoc-echo-area-use-multiline-p nil
+              eldoc-echo-area-prefer-doc-buffer 'maybe))
+
+(use-package eww
+  :hook (eww-after-render . eww-render-xslt))
+
 (defun eww-extract-xslt ()
   (save-excursion
     (goto-char (point-min))
@@ -273,9 +283,6 @@
       (append-to-file nil nil xml)
       (call-process-shell-command command nil nil)
       (eww-open-file html))))
-
-(add-hook 'eww-after-render-hook
-          'eww-render-xslt)
 
 (setq user-mail-address "j18516785606@icloud.com"
       user-full-name "RnE"
@@ -396,11 +403,9 @@
 (use-package markdown-mode
   :defer t
   :init (setq markdown-enable-math t
-              markdown-hide-urls t
-              markdown-fontify-code-blocks-natively t))
-
-(with-eval-after-load 'markdown-mode
-  (set-face-underline 'markdown-line-break-face nil))
+              markdown-fontify-code-blocks-natively t
+              markdown-hide-urls t)
+  :config (set-face-underline 'markdown-line-break-face nil))
 
 (use-package auctex
   :with "luatex"
