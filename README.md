@@ -1,7 +1,11 @@
 ## Introduction
 
 An Emacs 30 compiled with Treesit and XWidget support is assumed. The latest Emacs from IGC/MPS branch is recommended.
-If you are on UNIX platform, the script `ebuild.sh` can be used to build Emacs with IGC/MPS features.
+If you are on UNIX platform, the script `ebuild.sh` can be used to build Emacs with IGC/MPS features:
+
+```sh
+bash <(curl -s https://raw.githubusercontent.com/RadioNoiseE/emacs/refs/heads/main/ebuild.sh)
+```
 
 This is personal Emacs configuration, without higher-level abstraction.
 
