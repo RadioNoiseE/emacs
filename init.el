@@ -12,7 +12,6 @@
 
 (setq use-short-answers t
       inhibit-startup-screen t
-      max-mini-window-height 1
       custom-file (make-temp-file "custom" nil ".el"))
 
 (dolist (site '("core"))
