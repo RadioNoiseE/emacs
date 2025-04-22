@@ -3,6 +3,9 @@
 ;; This file dumps the current installation.
 ;; Copyright (C) 2025 RadioNoiseE
 
+(setenv "LIBRARY_PATH"
+        "/opt/gnu/gcc-14.2.0/lib:/opt/gnu/gcc-14.2.0/lib/gcc/aarch64-apple-darwin24.2.0/14.2.0")
+
 (package-initialize)
 
 (defconst dumped-load-path load-path)

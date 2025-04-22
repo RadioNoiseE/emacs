@@ -74,6 +74,7 @@
 (when (display-graphic-p)
   (set-face-attribute 'default nil :family "SF Mono")
   (set-face-attribute 'fixed-pitch nil :family "IBM 3270")
+  (set-face-attribute 'fixed-pitch-serif nil :family "IBM 3270")
   (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif"))
 
 (add-to-list 'face-font-rescale-alist

@@ -3,18 +3,20 @@
 set -e
 
 cat <<'EOF'
------------------------------------------------------------------------------------
-This script automates the build process of Emacs (more specifically the igc branch)
-on Darwin and other UNIX platforms.  The dependencies are `git', `curl', and all
-the dependencies a normal Emacs build requires.  You don't need to install the
-igc specific dependencies and won't need GNU makeinfo for document generation for
-a non-release Emacs as this script will take care of these.
+----------------------------------------------------------------------
+This script  automates the build  process of Emacs  (more specifically
+the igc branch) on Darwin  and other UNIX platforms.  The dependencies
+are  `git', `curl',  and all  the  dependencies a  normal Emacs  build
+requires.  You don't need to install the igc specific dependencies and
+won't  need GNU  makeinfo for  document generation  for a  non-release
+Emacs as this script will take care of these.
 
-You are recommended to create the working space in `/tmp' and drop in this script.
-The options passed to `./configure' Emacs is specified in the `eflg' array below.
+You are recommended to create the  working space in `/tmp' and drop in
+this script.  The  options passed to `./configure'  Emacs is specified
+in the `eflg' array below.
 
-                                                   Copyright 2024, 2025 RadioNoiseE
------------------------------------------------------------------------------------
+                                      Copyright 2024, 2025 RadioNoiseE
+----------------------------------------------------------------------
 EOF
 
 # ------------
@@ -64,18 +66,30 @@ cp emps/code/mps*.h emps/code/libmps.a eart
 # ---------------------------
 
 eflg=(
-  --disable-gc-mark-trace
-  --without-all
-  --with-xml2
-  --with-native-image-api
-  --with-ns
-  --with-gnutls
-  --with-toolkit-scroll-bars
-  --with-small-ja-dic
-  --with-tree-sitter
-  --with-xwidgets
+    --disable-gc-mark-trace
+    --without-all
+    --with-xml2
+    --with-native-image-api
+    --with-ns
+    --with-gnutls
+    --with-toolkit-scroll-bars
+    --with-small-ja-dic
+    --with-tree-sitter
+    --with-xwidgets
+    --with-zlib
+    --with-mps
+    --with-native-compilation=aot
 )
 
-cd esrc
-./autogen.sh && ./configure "CFLAGS=$CFLAGS" CPPFLAGS=-I`pwd`/../eart LDFLAGS=-L`pwd`/../eart --with-mps "${eflg[@]}" && \
-  make -j && make install
+GCCJIT_INCLUDE=/opt/gnu/gcc-14.2.0/include
+GCCJIT_LIBRARY=/opt/gnu/gcc-14.2.0/lib
+
+export LIBRARY_PATH=$GCCJIT_LIBRARY:$GCCJIT_LIBRARY/gcc/aarch64-apple-darwin24.2.0/14.2.0
+
+cd esrc && \
+    ./autogen.sh && \
+    ./configure CFLAGS="$CFLAGS" \
+                CPPFLAGS="-I`pwd`/../eart -I$GCCJIT_INCLUDE ${CPPFLAGS:-}" \
+                LDFLAGS="-L`pwd`/../eart -L$GCCJIT_LIBRARY -Wl,-rpath,$GCCJIT_LIBRARY ${LDFLAGS:-}" \
+                "${eflg[@]}" && \
+    make -j && make install

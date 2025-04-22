@@ -11,3 +11,6 @@ init:VQ:
 
 orig:VQ:
  $EAPP/Emacs --dump "${EDMP}/Emacs.pdmp.bak"
+
+revt:VQ:
+  mv $EDMP/Emacs.pdmp.bak $EDMP/Emacs.pdmp

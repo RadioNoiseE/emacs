@@ -3,6 +3,9 @@
 ;; This file optimizes the startup procedure.
 ;; Copyright (C) 2024, 2025 RadioNoiseE
 
+(setenv "LIBRARY_PATH"
+        "/opt/gnu/gcc-14.2.0/lib:/opt/gnu/gcc-14.2.0/lib/gcc/aarch64-apple-darwin24.2.0/14.2.0")
+
 (setq read-process-output-max (* 4 1024 1024)
       display-time-load-average nil
       frame-resize-pixelwise t
