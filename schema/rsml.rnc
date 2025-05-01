@@ -1,0 +1,177 @@
+# RelaxNG Compact Schema Specification for RsML 1.0
+# Copyright (C) 2025, Jing Huang <RadioNoiseE@gmail.com>
+
+default namespace rsml = "https://kekkan.org/RsML"
+namespace mml = "http://www.w3.org/1998/Math/MathML"
+
+start = rsml.element
+
+extern._any.attribute = attribute * - rsml:* { text }
+extern._any.element =
+  element * - rsml:* {
+    ( extern._any.attribute | text | extern._any.element )*
+  }
+
+inline.element =
+  ( inline.text.element
+    | inline.type.element
+    | inline.math.element
+    | inline.verbatim.element
+    | inline.semantic.element
+    | inline.reference.element )*
+
+display.geometry.attribute =
+  attribute size { xsd:string { pattern = "r\d+(\.\d+)?" } }
+display.align.attribute =
+  attribute align { string "left" | string "center" | string "right" }
+display.xref.attribute =
+  attribute label { text }
+display.element =
+  ( display.list.element
+    | display.figure.element
+    | display.table.element
+    | display.math.element
+    | display.verbatim.element
+    | display.quote.element
+    | display.message.element )*
+
+rsml.element =
+  element rsml {
+    ( attribute version { string "1.0" }
+      & attribute language { xsd:language }? ),
+    preamble.element,
+    document.element,
+    postamble.element
+  }
+
+preamble.element =
+  element meta {
+    element title { inline.element },
+    element subtitle { inline.element }?,
+    ( ( element author { text },
+        element affiliate { text }? )?
+      & element date {
+          element year { xsd:gYear },
+          ( element month { xsd:gMonth },
+            element day { xsd:gDay } )?
+        }? ),
+    element abstract { inline.element }?
+  }
+
+document.element =
+  element unit {
+    attribute role { string "chapter" | string "section" | string "subsection" },
+    element heading { inline.element },
+    ( element paragraph { inline.element }
+      | display.element )*,
+    document.element*
+  }+
+
+postamble.element =
+  element bibliography {
+    element entry {
+      element author { text },
+      element title { inline.element },
+      element year { xsd:gYear }
+    }+
+  }?
+
+inline.text.element =
+  text
+  | element quotation { empty }
+  | element apostrophe { empty }
+  | element ampersand { empty }
+  | element langle { empty }
+  | element rangle { empty }
+  | element space { empty }
+inline.type.element =
+  element emphasize { inline.text.element+ }
+  | element highlight { inline.text.element+ }
+inline.math.element =
+  element math {
+    extern._any.attribute?,
+    ( extern._any.element+
+      | inline.text.element+ )*
+  }
+inline.verbatim.element =
+  element verbatim {
+    attribute lang { text }?,
+    inline.text.element+
+  }
+inline.semantic.element =
+  element term { inline.text.element+ }
+  | element abbreviation { inline.text.element+ }
+  | element keyword { inline.text.element+ }
+  | element quote { inline.element }
+inline.reference.element =
+  element link { attribute literal { text }?, xsd:anyURI }
+  | element label { text }
+  | element refer {
+      attribute type {
+        string "chapter" | string "section" | string "subsection" | string "label" |
+        string "figure" | string "table" | string "math" | string "verbatim"
+      }, attribute label { text }
+    }
+  | element footnote {
+      attribute symbol { text }?,
+      inline.element
+    }
+
+display.list.element =
+  element list {
+    attribute type { string "enumerate" | string "itemize" | string "description" },
+    element item {
+      attribute name { text }?,
+      ( inline.element
+        & display.list.element? )+
+    }+
+  }
+display.figure.element =
+  element figure {
+    ( display.geometry.attribute?
+      & display.align.attribute?
+      & display.xref.attribute? ),
+    ( element image { xsd:anyURI }
+      & element caption { inline.element }? )
+  }
+display.table.element =
+  element table {
+    ( display.align.attribute?
+      & display.xref.attribute? ),
+    ( ( element head { display.table.column.element }?,
+        element body { display.table.column.element },
+        element foot { display.table.column.element }? )
+      & element caption { inline.element }? )
+  }
+display.table.column.element =
+  element column {
+    element cell {
+      ( attribute rowspan { xsd:unsignedInt }?,
+        attribute colspan { xsd:unsignedInt }? ),
+      inline.element
+    }+
+  }+
+display.math.element =
+  element math {
+    display.xref.attribute?,
+    extern._any.attribute?,
+    ( extern._any.element+
+      | inline.text.element+ )*
+  }
+display.verbatim.element =
+  element verbatim {
+    ( display.xref.attribute?
+      & attribute lang { text }?
+      & attribute line { xsd:unsignedInt } ),
+    inline.text.element+
+  }
+display.quote.element =
+  element quote {
+    attribute cite { text }?,
+    inline.element
+  }
+display.message.element =
+  element message {
+    attribute type { string "note" | string "tip" | string "warning" | string "caution" },
+    inline.element
+  }
