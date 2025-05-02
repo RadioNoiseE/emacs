@@ -21,6 +21,8 @@
   (dolist (face '(default fixed-pitch fixed-pitch-serif variable-pitch))
     (set-face-attribute face nil :family "SF Mono")))
 
+(set-face-attribute 'variable-pitch-text nil :height 1.0)
+
 (setq bidi-display-reordering nil
       bidi-inhibit-bpa t
       large-hscroll-threshold 1000
@@ -30,45 +32,33 @@
 (keymap-global-set "C-<wheel-up>" 'ignore)
 (keymap-global-set "C-<wheel-down>" 'ignore)
 
-(setq mode-line-space " "
-      mode-line-modes '("ⓐ")
-      mode-line-lighter '((corfu-mode . "ⓒ")
-                          (diff-hl-mode . "ⓗ")
-                          (eldoc-mode . "ⓔ")
-                          (flymake-mode . "ⓜ")
-                          (flyspell-mode . "ⓢ")
-                          (visual-line-mode . "ⓥ")
-                          (whitespace-mode . "ⓦ")
-                          (yas-minor-mode . "ⓨ")))
+(setq mode-line-right-align-edge 'right-margin
+      mode-line-space (propertize " " 'display '(space :height 1.4))
+      mode-line-minor-mode '("ⓐ")
+      mode-line-minor-mode-lighter '((corfu-mode . "ⓒ")
+                                     (diff-hl-mode . "ⓗ")
+                                     (eldoc-mode . "ⓔ")
+                                     (flymake-mode . "ⓜ")
+                                     (flyspell-mode . "ⓢ")
+                                     (visual-line-mode . "ⓥ")
+                                     (whitespace-mode . "ⓦ")
+                                     (yas-minor-mode . "ⓨ")))
 
-(dolist (mapping mode-line-lighter)
+(dolist (mapping mode-line-minor-mode-lighter)
   (let ((mode (intern (symbol-name (car mapping))))
         (lighter (cdr mapping)))
-    (push `(,mode ,lighter) mode-line-modes)))
+    (push `(,mode ,lighter) mode-line-minor-mode)))
 
-(defun mode-line-compose (left right)
-  `(:eval (let* ((left (format-mode-line ',left))
-                 (right (format-mode-line ',right))
-                 (glue (- (window-pixel-width)
-                          (string-pixel-width left)
-                          (string-pixel-width right))))
-            `(,(string-replace "%" "%%" left)
-              ,(propertize " " 'display
-                           `(space :ascent 76
-                                   :height 1.4
-                                   :width (,(max 0 glue))))
-              ,(string-replace "%" "%%" right)))))
-
-(setq-default mode-line-format (mode-line-compose
-                                (list mode-line-space
-                                      mode-line-mule-info
-                                      mode-line-modified
-                                      mode-line-space
-                                      '(:propertize "%b" face bold))
-                                (list '(:propertize mode-name face bold)
-                                      mode-line-space
-                                      mode-line-modes
-                                      mode-line-space)))
+(setq-default mode-line-format `(,mode-line-space
+                                 ,mode-line-mule-info
+                                 ,mode-line-modified
+                                 ,mode-line-space
+                                 (:propertize "%b" face bold)
+                                 mode-line-format-right-align
+                                 (:propertize mode-name face bold)
+                                 ,mode-line-space
+                                 ,mode-line-minor-mode
+                                 ,mode-line-space))
 
 (setq pixel-scroll-precision-use-momentum t
       pixel-scroll-precision-interpolate-page t
@@ -157,7 +147,7 @@
 
 (use-package ef-themes
   :defer nil
-  :config (ef-themes-select 'ef-tritanopia-light))
+  :config (ef-themes-select 'ef-owl))
 
 (use-package eglot
   :ensure nil
@@ -266,13 +256,14 @@
 
 (use-package treesit
   :ensure nil
+  :defer nil
   :init (setq treesit-language-unmask-alist '((c++ . cpp))
               treesit-language-fallback-alist '((html-ts-mode . mhtml-mode))
-              treesit-language-source-alist '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-                                              (c "https://github.com/tree-sitter/tree-sitter-c")
-                                              (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
-                                              (css "https://github.com/tree-sitter/tree-sitter-css")
-                                              (html "https://github.com/tree-sitter/tree-sitter-html")))
+              treesit-language-source-alist '((bash . "https://github.com/tree-sitter/tree-sitter-bash")
+                                              (c . "https://github.com/tree-sitter/tree-sitter-c")
+                                              (cpp . "https://github.com/tree-sitter/tree-sitter-cpp")
+                                              (css . "https://github.com/tree-sitter/tree-sitter-css")
+                                              (html . "https://github.com/tree-sitter/tree-sitter-html")))
   :config (dolist (grammar treesit-language-source-alist)
             (let* ((language (or (car (rassq (car grammar) treesit-language-unmask-alist))
                                  (car grammar)))
@@ -303,19 +294,19 @@
     'wl-draft-send
     'wl-draft-kill
     'mail-send-hook)
-  (setq user-mail-address "j18516785606@icloud.com"
-        user-full-name "RnE"
+  (setq elmo-passwd-storage-type 'auth-source
         mail-user-agent 'wl-user-agent
-        elmo-passwd-storage-type 'auth-source
-        wl-temporary-file-directory "~/.wl"
-        wl-smtp-connection-type 'starttls
+        user-mail-address "j18516785606@icloud.com"
+        user-full-name "RnE"
+        wl-local-domain "icloud.com"
         wl-smtp-authenticate-type "plain"
+        wl-smtp-connection-type 'starttls
         wl-smtp-posting-user "j18516785606@icloud.com"
         wl-smtp-posting-server "smtp.mail.me.com"
         wl-smtp-posting-port 587
-        wl-local-domain "icloud.com"
         wl-summary-width nil
         wl-summary-line-format "%n%T%P %W:%M/%D %h:%m %36(%t%[%c %f %]%) %s"
+        wl-temporary-file-directory "~/.wl"
         wl-thread-indent-level 2
         wl-thread-have-younger-brother-str "+"
         wl-thread-youngest-child-str "+"
