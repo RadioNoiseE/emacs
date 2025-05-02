@@ -16,6 +16,8 @@
              (require package nil t)))))
     (end-of-file nil)))
 
+(load (concat user-emacs-directory "init.el"))
+
 (defun dumped-init ()
   (global-font-lock-mode t)
   (transient-mark-mode t))
