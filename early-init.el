@@ -1,8 +1,7 @@
 ;;; early-init.el -* lexical-binding: t -*-
 
 (setq default-frame-alist '((horizontal-scroll-bar . nil)
-                            (vertical-scroll-bar . nil)
-                            (ns-transparent-titlebar . t))
+                            (vertical-scroll-bar . nil))
       frame-inhibit-implied-resize t
       frame-resize-pixelwise t
       window-resize-pixelwise t
