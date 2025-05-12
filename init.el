@@ -147,7 +147,7 @@
 
 (use-package ef-themes
   :defer nil
-  :config (ef-themes-select 'ef-owl))
+  :config (ef-themes-select 'ef-kassio))
 
 (use-package eglot
   :ensure nil
@@ -259,11 +259,11 @@
   :defer nil
   :init (setq treesit-language-unmask-alist '((c++ . cpp))
               treesit-language-fallback-alist '((html-ts-mode . mhtml-mode))
-              treesit-language-source-alist '((bash . "https://github.com/tree-sitter/tree-sitter-bash")
-                                              (c . "https://github.com/tree-sitter/tree-sitter-c")
-                                              (cpp . "https://github.com/tree-sitter/tree-sitter-cpp")
-                                              (css . "https://github.com/tree-sitter/tree-sitter-css")
-                                              (html . "https://github.com/tree-sitter/tree-sitter-html")))
+              treesit-language-source-alist '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+                                              (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+                                              (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+                                              (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+                                              (html . ("https://github.com/tree-sitter/tree-sitter-html"))))
   :config (dolist (grammar treesit-language-source-alist)
             (let* ((language (or (car (rassq (car grammar) treesit-language-unmask-alist))
                                  (car grammar)))
