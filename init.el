@@ -242,6 +242,9 @@
   :config (add-to-list 'rng-schema-locating-files
                        (expand-file-name "schema/schemas.xml" user-emacs-directory)))
 
+(use-package orderless
+  :init (setq completion-styles '(orderless basic)))
+
 (use-package proof-general
   :with "coqc"
   :init (setq proof-splash-enable nil
