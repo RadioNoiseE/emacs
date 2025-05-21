@@ -14,6 +14,7 @@
 (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
       backup-directory-alist `((".*" . ,temporary-file-directory))
       custom-file (make-temp-file "custom" nil ".el")
+      disabled-command-function nil
       use-short-answers t
       word-wrap-by-category t)
 
