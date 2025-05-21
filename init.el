@@ -243,7 +243,10 @@
                        (expand-file-name "schema/schemas.xml" user-emacs-directory)))
 
 (use-package orderless
-  :init (setq completion-styles '(orderless basic)))
+  :init (setq completion-styles '(orderless basic)
+              orderless-matching-styles '(orderless-literal
+                                          orderless-prefixes
+                                          orderless-regexp)))
 
 (use-package proof-general
   :with "coqc"
