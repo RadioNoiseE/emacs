@@ -150,16 +150,9 @@
   :defer nil
   :config (ef-themes-select 'ef-kassio))
 
-(use-package eglot
-  :ensure nil
-  :init (setq eglot-code-action-indications '(eldoc-hint)))
-
 (use-package eldoc
   :ensure nil
-  :hook (after-init . global-eldoc-mode)
-  :init (setq eldoc-echo-area-display-truncation-message nil
-              eldoc-echo-area-use-multiline-p nil
-              eldoc-echo-area-prefer-doc-buffer 'maybe))
+  :config (setq eldoc-documentation-function 'ignore))
 
 (use-package epg
   :ensure nil
@@ -227,6 +220,19 @@
   :ensure nil
   :init (setq ispell-program-name "aspell"))
 
+(use-package lsp-mode
+  :init (setq lsp-enable-folding nil
+              lsp-enable-on-type-formatting nil
+              lsp-enable-text-document-color nil
+              lsp-headerline-breadcrumb-enable nil))
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode)
+  :init (setq lsp-ui-doc-border nil
+              lsp-ui-doc-show-with-cursor t
+              lsp-ui-doc-show-with-mouse nil)
+  :config (set-face-background 'lsp-ui-doc-background nil))
+
 (use-package magit)
 
 (use-package marginalia
@@ -236,7 +242,9 @@
   :init (setq markdown-enable-math t
               markdown-fontify-code-blocks-natively t
               markdown-hide-urls t)
-  :config (set-face-underline 'markdown-line-break-face nil))
+  :config
+  (set-face-background 'markdown-code-face nil)
+  (set-face-underline 'markdown-line-break-face nil))
 
 (use-package nxml-mode
   :ensure nil
