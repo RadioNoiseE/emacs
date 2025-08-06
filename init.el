@@ -88,6 +88,9 @@
           (setenv name value)
           (setq exec-path (split-string value path-separator)))))))
 
+(defmacro secret-get (host)
+  `(funcall (plist-get (car (auth-source-search :host ,host)) :secret)))
+
 (let* ((site (expand-file-name "core" user-emacs-directory))
        (cookie (expand-file-name "core-autoloads.el" site)))
   (loaddefs-generate site cookie))
@@ -219,6 +222,11 @@
 (use-package flyspell
   :ensure nil
   :init (setq ispell-program-name "aspell"))
+
+(use-package gptel
+  :config (setq gptel-backend (gptel-make-anthropic "claude"
+                                :stream t
+                                :key (secret-get "console.anthropic.com"))))
 
 (use-package lsp-mode
   :init (setq lsp-enable-folding nil
