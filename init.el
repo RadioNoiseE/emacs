@@ -228,6 +228,9 @@
                                 :stream t
                                 :key (secret-get "console.anthropic.com"))))
 
+(use-package hyperbole
+  :hook (after-init . hyperbole-mode))
+
 (use-package lsp-mode
   :init (setq lsp-enable-folding nil
               lsp-enable-on-type-formatting nil
