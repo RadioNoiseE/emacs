@@ -143,8 +143,6 @@
               ([return] . corfu-send)
               ([escape] . corfu-quit)))
 
-(use-package diff-hl)
-
 (use-package dired
   :ensure nil
   :init (setq dired-use-ls-dired nil))
@@ -153,9 +151,23 @@
   :defer nil
   :config (ef-themes-select 'ef-kassio))
 
+(use-package eglot
+  :ensure nil
+  :init
+  (setq eglot-code-action-indications '(eldoc-hint))
+  (defun eglot-for-tab-command ()
+    (interactive)
+    (eglot-format)
+    (when (use-region-p)
+      (deactivate-mark)))
+  :bind (:map eglot-mode-map
+              ([tab] . eglot-for-tab-command)))
+
 (use-package eldoc
   :ensure nil
-  :config (setq eldoc-documentation-function 'ignore))
+  :config (setq eldoc-echo-area-display-truncation-message nil
+                eldoc-echo-area-use-multiline-p nil
+                eldoc-echo-area-prefer-doc-buffer 'maybe))
 
 (use-package epg
   :ensure nil
@@ -228,22 +240,6 @@
                                 :stream t
                                 :key (secret-get "console.anthropic.com"))))
 
-(use-package hyperbole
-  :hook (after-init . hyperbole-mode))
-
-(use-package lsp-mode
-  :init (setq lsp-enable-folding nil
-              lsp-enable-on-type-formatting nil
-              lsp-enable-text-document-color nil
-              lsp-headerline-breadcrumb-enable nil))
-
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
-  :init (setq lsp-ui-doc-border nil
-              lsp-ui-doc-show-with-cursor t
-              lsp-ui-doc-show-with-mouse nil)
-  :config (set-face-background 'lsp-ui-doc-background nil))
-
 (use-package magit)
 
 (use-package marginalia
@@ -311,52 +307,6 @@
 
 (use-package vertico
   :hook (after-init . vertico-mode))
-
-(use-package wanderlust
-  :init
-  (define-mail-user-agent
-    'wl-user-agent
-    'wl-user-agent-compose
-    'wl-draft-send
-    'wl-draft-kill
-    'mail-send-hook)
-  (setq elmo-passwd-storage-type 'auth-source
-        mail-user-agent 'wl-user-agent
-        user-mail-address "j18516785606@icloud.com"
-        user-full-name "RnE"
-        wl-local-domain "icloud.com"
-        wl-smtp-authenticate-type "plain"
-        wl-smtp-connection-type 'starttls
-        wl-smtp-posting-user "j18516785606@icloud.com"
-        wl-smtp-posting-server "smtp.mail.me.com"
-        wl-smtp-posting-port 587
-        wl-summary-width nil
-        wl-summary-line-format "%n%T%P %W:%M/%D %h:%m %36(%t%[%c %f %]%) %s"
-        wl-temporary-file-directory "~/.wl"
-        wl-thread-indent-level 2
-        wl-thread-have-younger-brother-str "+"
-        wl-thread-youngest-child-str "+"
-        wl-thread-vertical-str " "
-        wl-thread-horizontal-str "-"
-        wl-thread-space-str " "
-        wl-message-id-domain "smtp.mail.me.com"
-        wl-message-ignored-field-list '(".")
-        wl-message-visible-field-list
-        '("^Subject:"
-          "^\\(To\\|Cc\\):"
-          "^\\(From\\|Reply-To\\):"
-          "^\\(Posted\\|Date\\):"
-          "^Organization:"
-          "^X-Face\\(-[0-9]+\\)?:")
-        wl-message-sort-field-list
-        '("^Subject"
-          "^\\(To\\|Cc\\)"
-          "^\\(From\\|Reply-To\\)"
-          "^\\(Posted\\|Date\\)"
-          "^Organization")
-        wl-highlight-x-face-function 'x-face-decode-message-header)
-  (with-eval-after-load 'wl-demo
-    (set-face-background 'wl-highlight-demo-face nil)))
 
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode))
