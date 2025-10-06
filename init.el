@@ -74,7 +74,7 @@
         save-place-mode t
         window-divider-mode t)
 
-(keymap-global-set "M-¥" "\\")
+(define-key key-translation-map (kbd "¥") (kbd "\\"))
 
 (defun environment-flush ()
   (with-temp-buffer
