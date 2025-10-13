@@ -157,9 +157,11 @@
   (setq eglot-code-action-indications '(eldoc-hint))
   (defun eglot-for-tab-command ()
     (interactive)
-    (eglot-format)
-    (when (use-region-p)
-      (deactivate-mark)))
+    (if (yas-active-snippets)
+        (yas-next-field-or-maybe-expand)
+      (eglot-format)
+      (when (use-region-p)
+        (deactivate-mark))))
   :bind (:map eglot-mode-map
               ([tab] . eglot-for-tab-command)))
 
