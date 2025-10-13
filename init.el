@@ -171,10 +171,6 @@
                 eldoc-echo-area-use-multiline-p nil
                 eldoc-echo-area-prefer-doc-buffer 'maybe))
 
-(use-package epg
-  :ensure nil
-  :init (setq epg-pinentry-mode 'loopback))
-
 (use-package eww
   :ensure nil
   :hook (eww-after-render . eww-render-xslt)
