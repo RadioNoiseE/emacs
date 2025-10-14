@@ -1,4 +1,4 @@
-;;; early-init.el -* lexical-binding: t -*-
+;; -*- lexical-binding: t; -*-
 
 (setq default-frame-alist '((horizontal-scroll-bar . nil)
                             (vertical-scroll-bar . nil)
@@ -10,7 +10,8 @@
       inhibit-startup-echo-area-message user-login-name
       use-dialog-box nil)
 
-(setopt menu-bar-mode nil
+(setopt blink-cursor-mode nil
+        menu-bar-mode nil
         scroll-bar-mode nil
         tool-bar-mode nil
         tooltip-mode nil)

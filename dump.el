@@ -1,4 +1,4 @@
-;;; dump.el -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; -*-
 
 (package-initialize)
 
