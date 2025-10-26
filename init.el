@@ -306,5 +306,17 @@
 (use-package vertico
   :hook (after-init . vertico-mode))
 
+(use-package wanderlust
+  :init
+  (define-mail-user-agent
+    'wl-user-agent
+    'wl-user-agent-compose
+    'wl-draft-send
+    'wl-draft-kill
+    'mail-send-hook)
+  (setq mail-user-agent 'wl-user-agent)
+  (with-eval-after-load 'wl-demo
+    (set-face-background 'wl-highlight-demo-face nil)))
+
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode))
