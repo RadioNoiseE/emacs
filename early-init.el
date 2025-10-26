@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t -*-
 
 (setq default-frame-alist '((horizontal-scroll-bar . nil)
                             (vertical-scroll-bar . nil)
