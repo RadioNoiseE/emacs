@@ -124,7 +124,7 @@
   (setq-default TeX-engine 'luatex)
   (setq TeX-check-TeX nil
         TeX-parse-self t
-        TeX-view-program-list '(("Preview" "open -a Preview.app %o"))))
+        TeX-view-program-list '(("Preview" "open -a Preview %o"))))
 
 (use-package avy
   :bind (("C-: c" . avy-goto-char)
