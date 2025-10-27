@@ -8,7 +8,6 @@
       elmo-imap4-default-server "imap.mail.me.com"
       elmo-imap4-default-port 993
       elmo-imap4-default-stream-type 'ssl
-      elmo-message-fetch-confirm nil
       elmo-passwd-storage-type 'auth-source)
 
 (setq wl-expire-alist '(("^\\+trash$" (date 7) remove))
