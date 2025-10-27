@@ -1,10 +1,10 @@
 iCloud{
-  %Inbox:"rne.kou@icloud.com"/clear!            "Inbox"
-  %Drafts:"rne.kou@icloud.com"/clear!           "Drafts"
-  %Sent Messages:"rne.kou@icloud.com"/clear!    "Sent"
-  %Junk:"rne.kou@icloud.com"/clear!             "Junk"
-  %Deleted Messages:"rne.kou@icloud.com"/clear! "Trash"
-  %Archive:"rne.kou@icloud.com"/clear!          "Archive"
+  %Inbox            "Inbox"
+  %Drafts           "Drafts"
+  %Sent Messages    "Sent"
+  %Junk             "Junk"
+  %Deleted Messages "Trash"
+  %Archive          "Archive"
 }
 
 News{
