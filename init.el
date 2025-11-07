@@ -158,11 +158,15 @@
   (setq eglot-code-action-indications '(eldoc-hint))
   (defun eglot-for-tab-command ()
     (interactive)
-    (if (yas-active-snippets)
-        (yas-next-field-or-maybe-expand)
-      (eglot-format)
-      (when (use-region-p)
-        (deactivate-mark))))
+    (cond ((yas-active-snippets)
+           (yas-next-field-or-maybe-expand))
+          ((save-excursion
+             (beginning-of-line)
+             (looking-at-p "[ \t]*$"))
+           (indent-for-tab-command))
+          (t (eglot-format)
+             (when (use-region-p)
+               (deactivate-mark)))))
   :bind (:map eglot-mode-map
               ([tab] . eglot-for-tab-command)))
 
