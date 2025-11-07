@@ -39,7 +39,6 @@
       mode-line-space (propertize " " 'display '(space :height 1.4))
       mode-line-minor-mode '("ⓐ")
       mode-line-minor-mode-lighter '((corfu-mode . "ⓒ")
-                                     (diff-hl-mode . "ⓗ")
                                      (eldoc-mode . "ⓔ")
                                      (flymake-mode . "ⓜ")
                                      (flyspell-mode . "ⓢ")
