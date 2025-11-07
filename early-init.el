@@ -7,7 +7,6 @@
       frame-resize-pixelwise t
       window-resize-pixelwise t
       inhibit-startup-screen t
-      inhibit-startup-echo-area-message user-login-name
       use-dialog-box nil)
 
 (setopt blink-cursor-mode nil
