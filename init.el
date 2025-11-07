@@ -24,6 +24,8 @@
 
 (set-face-attribute 'variable-pitch-text nil :height 1.0)
 
+;; (load "kinsoku.el")
+
 (setq bidi-display-reordering nil
       bidi-inhibit-bpa t
       large-hscroll-threshold 1000
