@@ -22,7 +22,7 @@
       wl-smtp-posting-port 587
       wl-temporary-file-directory "~/.wlt"
       wl-summary-width nil
-      wl-summary-line-format "%n%T%P %W:%M/%D %h:%m %36(%t%[%c %f %]%) %s"
+      wl-summary-line-format "%n%T%P %M.%D %W %h:%m %t%[%20(%c %f%) %] %s"
       wl-thread-indent-level 2
       wl-thread-have-younger-brother-str "+"
       wl-thread-youngest-child-str "+"
