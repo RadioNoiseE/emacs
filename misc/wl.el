@@ -11,7 +11,7 @@
       elmo-passwd-storage-type 'auth-source)
 
 (setq wl-expire-alist '(("^\\+trash$" (date 7) remove))
-      wl-from "RadioNoiseE <rne.kou@icloud.com>"
+      wl-from "Huang Jing <rne.kou@icloud.com>"
       wl-fcc "%Sent Messages"
       wl-fcc-force-as-read t
       wl-local-domain "icloud.com"
