@@ -9,8 +9,7 @@
       inhibit-startup-screen t
       use-dialog-box nil)
 
-(setopt blink-cursor-mode nil
-        menu-bar-mode nil
+(setopt menu-bar-mode nil
         scroll-bar-mode nil
         tool-bar-mode nil
         tooltip-mode nil)
