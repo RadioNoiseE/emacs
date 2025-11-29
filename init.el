@@ -144,7 +144,8 @@
 
 (use-package dired
   :ensure nil
-  :init (setq dired-use-ls-dired nil))
+  :init (setq dired-isearch-filenames 'dwim
+              dired-use-ls-dired nil))
 
 (use-package ef-themes
   :defer nil
@@ -173,6 +174,10 @@
   :config (setq eldoc-echo-area-display-truncation-message nil
                 eldoc-echo-area-use-multiline-p nil
                 eldoc-echo-area-prefer-doc-buffer 'maybe))
+
+(use-package elisp-mode
+  :ensure nil
+  :init (setq elisp-fontify-semantically t))
 
 (use-package eww
   :ensure nil
