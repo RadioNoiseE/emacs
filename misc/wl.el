@@ -3,6 +3,8 @@
 (setq user-mail-address "rne.kou@icloud.com"
       user-full-name "Huang Jing")
 
+(setq mime-pgp-use-concurrency nil)
+
 (setq elmo-imap4-default-user user-mail-address
       elmo-imap4-default-authenticate-type 'clear
       elmo-imap4-default-server "imap.mail.me.com"
