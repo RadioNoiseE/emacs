@@ -3,7 +3,8 @@
 (setq user-mail-address "rne.kou@icloud.com"
       user-full-name "Huang Jing")
 
-(setq mime-pgp-use-concurrency nil)
+(setq mime-image-max-width 1.0
+      mime-pgp-use-concurrency nil)
 
 (setq elmo-imap4-default-user user-mail-address
       elmo-imap4-default-authenticate-type 'clear
