@@ -246,6 +246,12 @@
                                 :stream t
                                 :key (secret-get "console.anthropic.com"))))
 
+(use-package lolipop-mode
+  :ensure nil
+  :hook (after-init . lolipop-mode)
+  :init (setq lolipop-filter-commands '(pixel-scroll-precision)
+              lolipop-filter-modes '(minibuffer-mode)))
+
 (use-package magit)
 
 (use-package marginalia
