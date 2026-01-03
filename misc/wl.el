@@ -49,3 +49,22 @@
         "^Organization"
         "^X-Face\\(-[0-9]+\\)?:")
       wl-highlight-x-face-function 'x-face-decode-message-header)
+
+(with-eval-after-load 'mime-edit
+  (when-let* ((image-entry (assoc "image" mime-content-types)))
+    (setcdr image-entry
+            (append (cdr image-entry) '(("heic")))))
+  (add-to-list 'mime-file-types
+               '("\\.heic$" "image" "heic" (("name" . file))
+                 "base64" "inline" (("filename" . file)))))
+
+(with-eval-after-load 'mime-image
+  (when (mime-image-type-available-p 'heic)
+    (ctree-set-calist-strictly
+     'mime-preview-condition
+     (list '(type . image)
+           '(subtype . heic)
+           '(body . visible)
+           '(major-mode . t)
+           '(body-presentation-method . mime-display-image)
+           '(image-format . heic)))))
