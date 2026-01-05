@@ -248,9 +248,7 @@
 
 (use-package lolipop-mode
   :ensure nil
-  :hook (after-init . lolipop-mode)
-  :init (setq lolipop-filter-commands '(pixel-scroll-precision)
-              lolipop-filter-modes '(minibuffer-mode)))
+  :hook (after-init . lolipop-mode))
 
 (use-package magit)
 
