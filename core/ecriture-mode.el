@@ -21,7 +21,9 @@
    ecriture--cache-spacing line-spacing))
 
 (defun ecriture-setup ()
-  (set-frame-font (font-spec :name "Skia" :size 14) nil t)
+  (let ((font "Skia-14"))
+    (set-frame-font font nil t)
+    (add-to-list 'default-frame-alist `(font . ,font)))
   (dolist (face '(mode-line mode-line-active mode-line-inactive))
     (set-face-attribute face nil
                         :height 10
@@ -38,6 +40,8 @@
 
 (defun ecriture-cleanup ()
   (set-frame-font ecriture--cache-font nil t)
+  (setq default-frame-alist
+        (assq-delete-all 'font default-frame-alist))
   (dolist (spec ecriture--cache-faces)
     (pcase-let ((`(,face ,height ,box ,background) spec))
       (set-face-attribute face nil
