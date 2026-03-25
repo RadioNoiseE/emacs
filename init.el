@@ -15,6 +15,7 @@
       backup-directory-alist `((".*" . ,temporary-file-directory))
       custom-file (make-temp-file "custom" nil ".el")
       disabled-command-function nil
+      package-review-policy t
       use-short-answers t
       word-wrap-by-category t)
 
@@ -282,6 +283,9 @@
 (use-package sly
   :with "sbcl"
   :init (setq inferior-lisp-program "sbcl"))
+
+(use-package sml-mode
+  :with "poly")
 
 (use-package swift-mode
   :with "swift")
