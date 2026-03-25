@@ -1,11 +1,11 @@
-;;; x-face-e21.el -*- lexical-binding: t -*-
+;;; x-face.el -*- lexical-binding: t -*-
 
 ;; X-Face utilities for Emacs.
 ;; Copyright (C) 2000-2004, 2007 Katsumi Yamaoka
 ;; Copyright (C) 2021-2023 LdBeth
-;; Copyright (C) 2025 RadioNoiseE
+;; Copyright (C) 2025-2026 RadioNoiseE
 
-(defconst x-face-e21-version "0.129")
+(defconst x-face-version "0.130")
 
 (defgroup x-face nil
   "X-Face utilities."
@@ -269,8 +269,8 @@ X-Face: 2i'm.M0UyETCme?'R/?fE}i)R-aY$t;].MSLwmUfB\"^3H+so!vO79{mzviSR4#DM+}\"\"
          (setcdr element (x-face-cleanup-plist (cdr element))))))
 
 (defcustom x-face-image-attributes
-  '((light :ascent 80 :foreground "#000000")
-    (dark :ascent 80 :foreground "#000000" :background "#ffffff"))
+  '((light :ascent center :foreground "#000000")
+    (dark :ascent center :foreground "#000000" :background "#ffffff"))
   "List of image attributes assigning to the X-Face images.
 Each element consists of the value of the frame background mode
 \(`light' or `dark') and keyword-value pairs.  This allows the extra
@@ -1278,6 +1278,7 @@ This requires a support for images in your Emacs and the external
                           (when (bolp)
                             (insert "From:")
                             t)
+                        (insert " ")
                         (insert-image (pop images)))
                   (insert " X-Face\n"))
                 (put-text-property start (point) 'x-face-image t)))
@@ -1954,7 +1955,7 @@ record."
 (let (current-load-list)
   (define-advice bbdb-display-records-1
       (:around (orig) show-x-face-images-in-the-bbdb-buffer)
-    "Advised by X-Face-E21.  Show X-Faces images in the BBDB buffer."
+    "Advised by X-Face.  Show X-Faces images in the BBDB buffer."
     (let ((silent (or (and (boundp 'bbdb-gag-messages)
                            (symbol-value 'bbdb-gag-messages))
                       (and (boundp 'bbdb-silent-running)
@@ -1971,4 +1972,4 @@ record."
 
 (add-hook 'bbdb-list-hook 'x-face-energize-bbdb-buffer)
 
-(provide 'x-face-e21)
+(provide 'x-face)
