@@ -198,35 +198,31 @@
 (use-package eww
   :ensure nil
   :hook (eww-after-render . eww-render-xslt)
-  :init
-  (defun eww-extract-xslt ()
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "<\\?xml-stylesheet [^>]*href=['\"]\\([^'\"]+\\)['\"]" nil t)
-        (let ((xslt (match-string 1))
-              (link (url-generic-parse-url (eww-current-url))))
-          (if (file-name-absolute-p xslt)
-              (progn
-                (setf (url-filename link) xslt)
-                (url-recreate-url link))
-            (let* ((path (file-name-directory (url-filename link)))
-                   (xslt (expand-file-name xslt path)))
-              (setf (url-filename link) xslt)
-              (url-recreate-url link)))))))
-  (defun eww-render-xslt ()
-    (when (or (string-match "\\.xml$" (eww-current-url))
-              (save-excursion
-                (goto-char (point-min))
-                (re-search-forward "<\\?xml" nil t)))
-      (when-let* ((link (eww-extract-xslt))
-                  (xslt (make-temp-file "eww" nil ".xsl"))
-                  (xml (make-temp-file "eww" nil ".xml"))
-                  (html (make-temp-file "eww" nil ".html"))
-                  (command (format "xsltproc '%s' '%s' > '%s'" xslt xml html)))
-        (url-copy-file link xslt t)
-        (append-to-file nil nil xml)
-        (call-process-shell-command command nil nil)
-        (eww-open-file html)))))
+  :init (defun eww-render-xslt ()
+          (when (or (string-match "\\.xml$" (eww-current-url))
+                    (save-excursion
+                      (goto-char (point-min))
+                      (re-search-forward "<\\?xml" nil t)))
+            (when-let* ((url (save-excursion
+                               (goto-char (point-min))
+                               (when (re-search-forward "<\\?xml-stylesheet [^>]*href=['\"]\\([^'\"]+\\)['\"]" nil t)
+                                 (let ((xsl (match-string 1))
+                                       (url (url-generic-parse-url (eww-current-url))))
+                                   (if (file-name-absolute-p xsl)
+                                       (progn
+                                         (setf (url-filename url) xsl)
+                                         (url-recreate-url url))
+                                     (let* ((path (file-name-directory (url-filename url)))
+                                            (xsl (expand-file-name xsl path)))
+                                       (setf (url-filename url) xsl)
+                                       (url-recreate-url url)))))))
+                        (xsl (make-temp-file "eww" nil ".xsl"))
+                        (xml (make-temp-file "eww" nil ".xml"))
+                        (html (make-temp-file "eww" nil ".html")))
+              (url-copy-file url xsl t)
+              (append-to-file nil nil xml)
+              (call-process-shell-command (format "xsltproc '%s' '%s' > '%s'" xsl xml html) nil nil)
+              (eww-open-file html)))))
 
 (use-package flymake
   :ensure nil
