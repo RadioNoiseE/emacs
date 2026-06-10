@@ -86,7 +86,8 @@
         pixel-scroll-precision-mode t
         repeat-mode t
         save-place-mode t
-        window-divider-mode t)
+        window-divider-mode t
+        winner-mode t)
 
 (define-key key-translation-map (kbd "¥") (kbd "\\"))
 
