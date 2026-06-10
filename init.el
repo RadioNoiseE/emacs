@@ -7,6 +7,14 @@
 
 (setq-local file-name-handler-alist nil)
 
+(define-advice keyboard-quit
+    (:around (orig) quit-minibuffer)
+  (if (active-minibuffer-window)
+      (if (minibufferp)
+          (minibuffer-keyboard-quit)
+        (abort-recursive-edit))
+    (funcall-interactively orig)))
+
 (dolist (site '("core"))
   (add-to-list 'load-path
                (expand-file-name site user-emacs-directory)))
