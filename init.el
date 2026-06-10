@@ -336,7 +336,8 @@
   :with "ocaml")
 
 (use-package vertico
-  :hook (after-init . vertico-mode))
+  :hook (after-init . vertico-mode)
+  :init (setq read-extended-command-predicate 'command-completion-default-include-p))
 
 (use-package wanderlust
   :init
