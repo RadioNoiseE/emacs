@@ -23,8 +23,14 @@
       backup-directory-alist `((".*" . ,temporary-file-directory))
       custom-file (make-temp-file "custom" nil ".el")
       disabled-command-function nil
-      package-review-policy t
+      help-window-select t
+      isearch-lazy-count t
+      kill-do-not-save-duplicates t
+      redisplay-skip-fontification-on-input t
+      save-interprogram-paste-before-kill t
+      set-mark-command-repeat-pop t
       use-short-answers t
+      window-combination-resize t
       word-wrap-by-category t)
 
 (when (display-graphic-p)
