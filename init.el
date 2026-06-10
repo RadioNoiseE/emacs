@@ -224,6 +224,10 @@
               (call-process-shell-command (format "xsltproc '%s' '%s' > '%s'" xsl xml html) nil nil)
               (eww-open-file html)))))
 
+(use-package expreg
+  :bind (("C->" . expreg-expand)
+         ("C-<" . expreg-contract)))
+
 (use-package flymake
   :ensure nil
   :init (define-fringe-bitmap 'flymake-fringe-indicator
