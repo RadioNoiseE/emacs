@@ -8,6 +8,13 @@
 (eval-when-compile
   (require 'rx))
 
+(treesit-declare-unavailable-functions)
+
+(add-to-list
+ 'treesit-language-source-alist
+ '(rnc "https://github.com/LdBeth/tree-sitter-rnc")
+ t)
+
 (defconst rnc-mode-syntax-table
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?# "<" st)
@@ -38,30 +45,23 @@
 
 (defvar rnc--treesit-font-lock-settings
   (treesit-font-lock-rules
-
    :language 'rnc
    :feature 'comment
    '((comment) @font-lock-comment-face)
-
    :language 'rnc
    :feature 'keyword
    `([,@rnc--keywords] @font-lock-keyword-face)
-
    :language 'rnc
    :feature 'string
    '((literal_segment) @font-lock-string-face)
-
    :language 'rnc
    :feature 'definition
    '((define
       name: (identifier) @font-lock-function-name-face)
-
      (param
       name: (identifier) @font-lock-variable-name-face)
-
      (annotation_attribute
       name: (name) @font-lock-variable-name-face))
-
    :language 'rnc
    :feature 'namespace
    :override t
@@ -71,19 +71,15 @@
       ns: (prefix) @font-lock-constant-face)
      (datatype_name
       ns: (prefix) @font-lock-constant-face))
-
    :language 'rnc
    :feature 'docstring
    '((documentation) @font-lock-doc-face)
-
    :language 'rnc
    :feature 'operator
    `([,@rnc--operators] @font-lock-operator-face)
-
    :language 'rnc
    :feature 'bracket
    '((["(" ")" "[" "]" "{" "}"]) @font-lock-bracket-face)
-
    :language 'rnc
    :feature 'delimiter
    `(([,@rnc--delimiters]) @font-lock-delimiter-face)))
@@ -122,9 +118,10 @@ Return nil if there is no name or if NODE is not a defun node."
 
 ;;;###autoload
 (define-derived-mode rnc-ts-mode prog-mode "RNC"
-  "Major mode to edit Relax-NG Compact files."
+  "Major mode to edit RELAX NG compact files."
   :syntax-table rnc-mode-syntax-table
-  (when (treesit-ready-p 'rnc)
+  (when (and (treesit-ensure-installed 'rnc)
+             (treesit-ready-p 'rnc))
     (setq-local comment-start "#")
     (treesit-parser-create 'rnc)
     (setq-local treesit-font-lock-settings rnc--treesit-font-lock-settings)
