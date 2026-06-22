@@ -170,7 +170,8 @@
 (use-package eglot
   :ensure nil
   :init
-  (setq eglot-code-action-indications '(eldoc-hint))
+  (setq eglot-documentation-renderer 'markdown-ts-view-mode
+        eglot-code-action-indications '(eldoc-hint))
   (defun eglot-for-tab-command ()
     (interactive)
     (cond ((yas-active-snippets)
@@ -271,13 +272,8 @@
 (use-package marginalia
   :hook (after-init . marginalia-mode))
 
-(use-package markdown-mode
-  :init (setq markdown-enable-math t
-              markdown-fontify-code-blocks-natively t
-              markdown-hide-urls t)
-  :config
-  (set-face-background 'markdown-code-face nil)
-  (set-face-underline 'markdown-line-break-face nil))
+(use-package markdown-ts-mode
+  :ensure nil)
 
 (use-package nxml-mode
   :ensure nil
@@ -307,30 +303,9 @@
 
 (use-package treesit
   :ensure nil
-  :defer nil
-  :init (setq treesit-language-unmask-alist '((c++ . cpp))
-              treesit-language-fallback-alist '((html-ts-mode . mhtml-mode))
-              treesit-language-source-alist '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
-                                              (c . ("https://github.com/tree-sitter/tree-sitter-c"))
-                                              (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-                                              (css . ("https://github.com/tree-sitter/tree-sitter-css"))
-                                              (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-                                              (rnc . ("https://github.com/ldbeth/tree-sitter-rnc"))))
-  :config (dolist (grammar treesit-language-source-alist)
-            (let* ((language (or (car (rassq (car grammar) treesit-language-unmask-alist))
-                                 (car grammar)))
-                   (derived (intern (concat (symbol-name language) "-ts-mode")))
-                   (fallback (assq derived treesit-language-fallback-alist))
-                   (default (or (cdr fallback)
-                                (intern (concat (symbol-name language) "-mode")))))
-              (and (not (and fallback (not (cdr fallback))))
-                   (fboundp derived)
-                   (if (treesit-ready-p (car grammar) t)
-                       (add-to-list 'major-mode-remap-alist
-                                    `(,default . ,derived))
-                     (when (fboundp default)
-                       (add-to-list 'major-mode-remap-alist
-                                    `(,derived . ,default))))))))
+  :init
+  (setq treesit-auto-install-grammar 'always)
+  (setopt treesit-enabled-modes t))
 
 (use-package tuareg
   :with "ocaml")
