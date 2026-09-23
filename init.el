@@ -5,6 +5,8 @@
 (when (boundp 'dumped-load-path)
   (setq load-path dumped-load-path))
 
+(setq trusted-content :all)
+
 (setq-local file-name-handler-alist nil)
 
 (define-advice keyboard-quit
@@ -273,7 +275,9 @@
   :hook (after-init . marginalia-mode))
 
 (use-package markdown-ts-mode
-  :ensure nil)
+  :defer nil
+  :ensure nil
+  :config (require 'markdown-ts-mode-x))
 
 (use-package nxml-mode
   :ensure nil
